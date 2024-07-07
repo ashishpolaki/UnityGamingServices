@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c2e8e76eeb86c444f835b851e31e1742, type: 3}
-  m_Name: ScreensConfig
+  m_Name: UIScreenConfig
   m_EditorClassIdentifier: 
   screens:
-  - {fileID: 6777969829649719995, guid: 579334059efcaab43b1ccc3800e46f31, type: 3}
+  - {fileID: 372432558995484459, guid: 579334059efcaab43b1ccc3800e46f31, type: 3}

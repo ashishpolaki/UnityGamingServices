@@ -5,38 +5,47 @@ using UnityEngine;
 namespace UI.Screen
 {
     [System.Serializable]
-    public class UIScreenManager
+    public class UIScreenManager 
     {
         [SerializeField] private ScreenConfigSO screenConfig;
-        [SerializeField] private Canvas canvas;
+        [SerializeField] private UIHolder uiHolder;
 
-        public BaseScreen ScreenEvent(ScreenType _screenType, UIScreenEvent uIEvent)
+        private Dictionary<ScreenType, BaseScreen> screenDictionary = new Dictionary<ScreenType, BaseScreen>();
+
+        public void Initialize()
         {
-            BaseScreen screen = default;
+            if (uiHolder == null)
+            {
+                uiHolder = GameObject.FindObjectOfType<UIHolder>();
+            }
+        }
+
+        public void ScreenEvent(ScreenType _screenType, UIScreenEvent uIEvent)
+        {
+            if (uIEvent == UIScreenEvent.Open || uIEvent == UIScreenEvent.Show)
+            {
+                //If screen is not in the dictionary, instantiate it
+                if (!screenDictionary.ContainsKey(_screenType))
+                {
+                    var screen = InstantiateScreen(_screenType);
+                    screenDictionary.Add(_screenType, screen);
+                }
+              
+                screenDictionary[_screenType].Open();
+            }
+        }
+
+        public BaseScreen InstantiateScreen(ScreenType screenType)
+        {
+            BaseScreen screen = null;
 
             foreach (var item in screenConfig.screens)
             {
-                if (item.ScreenType == _screenType)
+                if (item.ScreenType == screenType)
                 {
-                    screen = item;
+                    screen = GameObject.Instantiate(item, uiHolder.transform);
                     break;
                 }
-            }
-
-            switch (uIEvent)
-            {
-                case UIScreenEvent.Open:
-                    screen.Open();
-                    break;
-                case UIScreenEvent.Close:
-                    screen.Close();
-                    break;
-                case UIScreenEvent.Show:
-                    screen.Show();
-                    break;
-                case UIScreenEvent.Hide:
-                    screen.Hide();
-                    break;
             }
             return screen;
         }
