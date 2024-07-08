@@ -18,12 +18,13 @@ public class GameManager : MonoBehaviour
             return instance;
         }
     }
+
     #region Properties
-
     public UGS.Authentication Authentication { get; private set; }
-
+    public GPS GPS { get; private set; }
     #endregion
 
+    #region Unity Methods
     private void Awake()
     {
         if (instance == null)
@@ -35,11 +36,25 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        RegisterInstances();
-    }
 
-    private void RegisterInstances()
+        GPS = new GPS();
+        InitializeUGS();
+    }
+    private void OnEnable()
+    {
+    }
+    private void OnDisable()
+    {
+        Authentication.DeSubscribeEvents();
+    }
+    #endregion
+
+    /// <summary>
+    /// Initialize Unity Gaming Services
+    /// </summary>
+    private void InitializeUGS()
     {
         Authentication = new UGS.Authentication();
+        Authentication.InitializeUnityServices();
     }
 }

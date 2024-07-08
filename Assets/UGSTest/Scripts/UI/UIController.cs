@@ -1,17 +1,8 @@
-using System.Collections.Generic;
 using UI.Screen;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace UI
 {
-    public enum UIScreenEvent
-    {
-        Open,
-        Close,
-        Show,
-        Hide
-    }
     public class UIController : MonoBehaviour
     {
         public static UIController Instance;
@@ -28,10 +19,6 @@ namespace UI
             }
             screenManager.Initialize();
         }
-        private void OnDestroy()
-        {
-            //   currentActiveScreen = null;
-        }
 
         public void ScreenEvent(ScreenType screenType, UIScreenEvent uIScreenEvent)
         {
@@ -39,4 +26,11 @@ namespace UI
             screenManager.ScreenEvent(screenType, uIScreenEvent);
         }
     }
+}
+public enum UIScreenEvent
+{
+    Open,
+    Close,
+    Show,
+    Hide
 }
