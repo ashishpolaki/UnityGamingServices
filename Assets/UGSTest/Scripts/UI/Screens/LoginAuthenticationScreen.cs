@@ -15,8 +15,6 @@ namespace UI.Screen
         private void OnEnable()
         {
             GameManager.Instance.Authentication.OnSignedInEvent += SignedIn;
-            GameManager.Instance.Authentication.OnSignInFailed += SignInFail;
-            GameManager.Instance.Authentication.OnSessionExpired += SessionExpire;
 
             registerTabBtn.onClick.AddListener(() => OpenRegisterTab());
             loginTabBtn.onClick.AddListener(() => OpenLoginTab());
@@ -29,9 +27,7 @@ namespace UI.Screen
         private void OnDisable()
         {
             GameManager.Instance.Authentication.OnSignedInEvent -= SignedIn;
-            GameManager.Instance.Authentication.OnSignInFailed -= SignInFail;
-            GameManager.Instance.Authentication.OnSessionExpired -= SessionExpire;
-
+      
             registerTabBtn.onClick.RemoveAllListeners();
             loginTabBtn.onClick.RemoveAllListeners();
             signInAnonymousBtn.onClick.RemoveAllListeners();
@@ -51,10 +47,9 @@ namespace UI.Screen
             CloseTab(ScreenTabType.Login);
             OpenTab(ScreenTabType.Register);
         }
-
         private void SignInAnonymously()
         {
-            GameManager.Instance.Authentication.SignInAnonymously();
+            GameManager.Instance.Authentication.SignInAnonymouslyAsync();
         }
         private void ButtonInteractable(ScreenTabType screenType)
         {
@@ -67,14 +62,6 @@ namespace UI.Screen
         {
             UIController.Instance.ScreenEvent(ScreenType, UIScreenEvent.Close);
             UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Open);
-        }
-        private void SignInFail()
-        {
-
-        }
-        private void SessionExpire()
-        {
-
         }
         #endregion
     }

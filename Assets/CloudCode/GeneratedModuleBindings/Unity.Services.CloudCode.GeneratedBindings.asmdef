@@ -3,7 +3,8 @@
     "rootNamespace": "Unity.Services.CloudCode.GeneratedBindings",
     "references": [
         "Unity.Services.CloudCode",
-        "Unity.Services.CloudCode.Authoring.Editor.Core"
+        "Unity.Services.CloudCode.Authoring.Editor.Core",
+        ""
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -8,16 +8,19 @@ namespace UI.Screen
     {
         [SerializeField] private Button startRaceBtn;
         [SerializeField] private Button registerVenueBtn;
+        [SerializeField] private Button scheduleRaceBtn;
 
         private void Awake()
         {
             startRaceBtn.onClick.AddListener(() => StartRace());
             registerVenueBtn.onClick.AddListener(() => RegisterVenue());
+            scheduleRaceBtn.onClick.AddListener(() => ScheduleRace());
         }
         private void OnDestroy()
         {
             startRaceBtn.onClick.RemoveAllListeners();
             registerVenueBtn.onClick.RemoveAllListeners();
+            scheduleRaceBtn.onClick.RemoveAllListeners();
         }
         private void RegisterVenue()
         {
@@ -27,6 +30,10 @@ namespace UI.Screen
         private void StartRace()
         {
 
+        }
+        private void ScheduleRace()
+        {
+            OpenTab(ScreenTabType.RaceSchedule);
         }
     }
 }

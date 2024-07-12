@@ -40,12 +40,21 @@ namespace UI.Screen
             if (string.IsNullOrEmpty(locationLatitude.text) || string.IsNullOrEmpty(locationLongitude.text) || string.IsNullOrEmpty(radiusInput.text))
             {
                 Debug.Log("Please fill all the fields");
-                return;
+                //     return;
             }
 
             float latitude = float.Parse(locationLatitude.text);
             float longitude = float.Parse(locationLongitude.text);
             float radius = float.Parse(radiusInput.text);
+
+            UGS.CloudCode.RegisterHostItem registerHostItem = new UGS.CloudCode.RegisterHostItem
+            {
+                PlayerID = GameManager.Instance.PlayerLoginData.PlayerID,
+                Longitude = 17.48485443046742f,
+                Latitude = 78.41473168574562f,
+                Radius = radius
+            };
+            GameManager.Instance.CloudCode.RegisterVenue(registerHostItem);
 
             UIController.Instance.ScreenEvent(ScreenType, UIScreenEvent.Hide);
             UIController.Instance.ScreenEvent(ScreenType.Host, UIScreenEvent.Show);

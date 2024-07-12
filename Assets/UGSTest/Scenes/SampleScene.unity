@@ -296,7 +296,7 @@ GameObject:
   - component: {fileID: 764455037}
   - component: {fileID: 764455038}
   m_Layer: 0
-  m_Name: RelayManager
+  m_Name: PlayerLogin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -326,7 +326,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 764455035}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b4498e0799d49f49b65babcfd2f1e0b, type: 3}
+  m_Script: {fileID: 11500000, guid: 0fb9d95335855de45b2661fae49ec4f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &963194225
@@ -929,7 +929,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1685065237}
-    PlayerPrefab: {fileID: 1281897688069415350, guid: 2653e33271dc7c044b06eeeb1a09b392, type: 3}
+    PlayerPrefab: {fileID: 0}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: 7c02712dfc09d3242a1030451f52206c, type: 2}

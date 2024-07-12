@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace UI.Screen.Tab
@@ -35,4 +33,7 @@ public enum ScreenTabType
     None,
     Login,
     Register,
+    RaceSchedule,
+    PlayerName,
+    RoleSelection,
 }

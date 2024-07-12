@@ -9,11 +9,21 @@ namespace UGS
     public class Authentication
     {
         public event Action OnSignedInEvent;
-        public event Action OnSignInFailed;
+        public event Action<string> OnSignInFailed;
         public event Action OnSignedOut;
         public event Action OnSessionExpired;
+        public event Action<string> OnPlayerNameChanged;
 
-        public async void InitializeUnityServices()
+        public string PlayerID { get; private set; }
+        public string PlayerName { get; private set; }
+
+        public Authentication()
+        {
+            InitializeUnityServices();
+        }
+
+        #region Initialize
+        private async void InitializeUnityServices()
         {
             try
             {
@@ -33,13 +43,14 @@ namespace UGS
                 Debug.LogException(ex);
             }
         }
+        #endregion
 
-        public async Task<string> GetPlayerNameAsync()
+        #region PlayerName
+        public async Task GenerateRandomPlayerName()
         {
-            string playerName = string.Empty;
             try
             {
-                playerName = await AuthenticationService.Instance.GetPlayerNameAsync();
+                PlayerName = await AuthenticationService.Instance.GetPlayerNameAsync();
             }
             catch (AuthenticationException ex)
             {
@@ -53,14 +64,14 @@ namespace UGS
                 // Notify the player with the proper error message
                 Debug.LogException(ex);
             }
-            return playerName;
+            OnPlayerNameChanged?.Invoke(PlayerName);
         }
 
-        public async void SetPlayerNameAsync(string _playerName)
+        public async Task SetPlayerNameAsync(string _playerName)
         {
             try
             {
-                await AuthenticationService.Instance.UpdatePlayerNameAsync(_playerName);
+                PlayerName = await AuthenticationService.Instance.UpdatePlayerNameAsync(_playerName);
             }
             catch (AuthenticationException ex)
             {
@@ -74,7 +85,9 @@ namespace UGS
                 // Notify the player with the proper error message
                 Debug.LogException(ex);
             }
+            OnPlayerNameChanged?.Invoke(PlayerName);
         }
+        #endregion
 
         public bool IsSignInCached()
         {
@@ -86,18 +99,17 @@ namespace UGS
             return false;
         }
 
-        public async void SignUpAsync(string userName, string playername, string password)
+        public async void SignUpAsync(string userName, string password)
         {
             try
             {
                 await AuthenticationService.Instance.SignUpWithUsernamePasswordAsync(userName, password);
-                SetPlayerNameAsync(playername);
             }
             catch (AuthenticationException ex)
             {
                 // Compare error code to AuthenticationErrorCodes
                 // Notify the player with the proper error message
-                Debug.LogException(ex);
+                // Debug.LogException(ex);
             }
             catch (RequestFailedException ex)
             {
@@ -106,8 +118,28 @@ namespace UGS
                 Debug.LogException(ex);
             }
         }
+        public async void SignInWithUsernamePasswordAsync(string username, string password)
+        {
+            try
+            {
+                await AuthenticationService.Instance.SignInWithUsernamePasswordAsync(username, password);
+            }
+            catch (AuthenticationException ex)
+            {
+                // Compare error code to AuthenticationErrorCodes
+                // Notify the player with the proper error message
+                Debug.Log(ex.Message);
+            }
+            catch (RequestFailedException ex)
+            {
+                // Compare error code to CommonErrorCodes
+                // Notify the player with the proper error message
+                Debug.Log(ex.Message);
+            }
+        }
 
-        public async void SignInAnonymously()
+
+        public async void SignInAnonymouslyAsync()
         {
             //if session token is available, sign out the player
             if (IsSignInCached())
@@ -133,7 +165,6 @@ namespace UGS
                 Debug.LogException(ex);
             }
         }
-
         public void Signout()
         {
             AuthenticationService.Instance.SignOut();
@@ -158,25 +189,21 @@ namespace UGS
 
             AuthenticationService.Instance.SignInFailed -= (err) => HandleSigninFailedEvent(err);
 
-            AuthenticationService.Instance.SignedOut -= ()=> HandleSignOutEvent();
+            AuthenticationService.Instance.SignedOut -= () => HandleSignOutEvent();
 
             AuthenticationService.Instance.Expired -= () => HandleSessionExpireEvent();
         }
 
-        private void HandleSignInSuccessEvent()
+        private async void HandleSignInSuccessEvent()
         {
-            // Shows how to get a playerID
-            Debug.Log($"PlayerID: {AuthenticationService.Instance.PlayerId}");
-
-            // Shows how to get an access token
-            Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
-
+            PlayerID = AuthenticationService.Instance.PlayerId;
+            PlayerName = await AuthenticationService.Instance.GetPlayerNameAsync(false);
             OnSignedInEvent?.Invoke();
         }
-        
+
         private void HandleSigninFailedEvent(RequestFailedException err)
         {
-            Debug.LogError(err);
+            OnSignInFailed?.Invoke(err.Message);
         }
         private void HandleSignOutEvent()
         {

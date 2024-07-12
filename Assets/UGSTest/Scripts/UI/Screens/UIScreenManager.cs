@@ -22,52 +22,50 @@ namespace UI.Screen
             }
         }
 
-        public void ScreenEvent(ScreenType _screenType, UIScreenEvent uIEvent)
+        public void ScreenEvent(ScreenType _screenType, UIScreenEvent uIEvent,ScreenTabType screenTabType)
         {
             switch (uIEvent)
             {
                 case UIScreenEvent.Open:
-                    OpenScreen(_screenType);
+                    OpenScreen(_screenType, screenTabType);
                     break;
                 case UIScreenEvent.Close:
-                    CloseScreen(_screenType);
+                    CloseScreen(_screenType, screenTabType);
                     break;
                 case UIScreenEvent.Show:
-                    ShowScreen(_screenType);
+                    ShowScreen(_screenType, screenTabType);
                     break;
                 case UIScreenEvent.Hide:
-                    HideScreen(_screenType);
+                    HideScreen(_screenType, screenTabType);
                     break;
             }
         }
-
-        private void OpenScreen(ScreenType _screenType)
+        private void OpenScreen(ScreenType _screenType,ScreenTabType screenTabType)
         {
             InstantiateIfDoesntExist(_screenType);
             currentActiveScreen = screenDictionary[_screenType];
-            currentActiveScreen.Open();
-        }
-        private void CloseScreen(ScreenType _screenType)
+            currentActiveScreen.Open(screenTabType);
+        } 
+        private void CloseScreen(ScreenType _screenType, ScreenTabType screenTabType)
         {
             if (screenDictionary.ContainsKey(_screenType))
             {
                 screenDictionary[_screenType].Close();
             }
         }
-        private void ShowScreen(ScreenType _screenType)
+        private void ShowScreen(ScreenType _screenType, ScreenTabType screenTabType)
         {
             InstantiateIfDoesntExist(_screenType);
             currentActiveScreen = screenDictionary[_screenType];
-            currentActiveScreen.Show();
+            currentActiveScreen.Show(screenTabType);
         }
-        private void HideScreen(ScreenType _screenType)
+        private void HideScreen(ScreenType _screenType, ScreenTabType screenTabType)
         {
             if (screenDictionary.ContainsKey(_screenType))
             {
                 screenDictionary[_screenType].Hide();
             }
-        }
-
+        } 
 
         /// <summary>
         /// Instantiate the screen if it doesn't exist in the dictionary

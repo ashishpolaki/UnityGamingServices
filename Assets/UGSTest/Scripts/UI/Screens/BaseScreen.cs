@@ -15,12 +15,21 @@ namespace UI.Screen
         public List<BaseTab> Tabs { get => tabs; }
         public ScreenTabType DefaultOpenTab { get => defaultOpenTab; }
 
-        public virtual void Open()
+        public virtual void Open(ScreenTabType screenTabType)
         {
             gameObject.SetActive(true);
-            if (defaultOpenTab != ScreenTabType.None)
+            //If screenTabType is not None then open the tab
+            if (screenTabType != ScreenTabType.None)
             {
-                OpenTab(defaultOpenTab);
+                OpenTab(screenTabType);
+            }
+            else
+            {
+                //else if defaultOpenTab is not None then open the defaulttab
+                if (defaultOpenTab != ScreenTabType.None)
+                {
+                    OpenTab(defaultOpenTab);
+                }
             }
         }
         public virtual void Close()
@@ -34,9 +43,13 @@ namespace UI.Screen
                 }
             }
         }
-        public virtual void Show()
+        public virtual void Show(ScreenTabType screenTabType)
         {
             gameObject.SetActive(true);
+            if (screenTabType != ScreenTabType.None)
+            {
+                OpenTab(screenTabType);
+            }
         }
         public virtual void Hide()
         {
@@ -78,9 +91,9 @@ namespace UI.Screen
         public ScreenType ScreenType { get; }
         public List<BaseTab> Tabs { get; }
         public ScreenTabType DefaultOpenTab { get; }
-        public void Open();
+        public void Open(ScreenTabType screenTabType);
         public void Close();
-        public void Show();
+        public void Show(ScreenTabType screenTabType);
         public void Hide();
     }
 }

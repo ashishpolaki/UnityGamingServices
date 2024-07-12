@@ -20,10 +20,10 @@ namespace UI
             screenManager.Initialize();
         }
 
-        public void ScreenEvent(ScreenType screenType, UIScreenEvent uIScreenEvent)
+        public void ScreenEvent(ScreenType screenType, UIScreenEvent uIScreenEvent, ScreenTabType screenTabType = ScreenTabType.None)
         {
             /*currentActiveScreen =*/
-            screenManager.ScreenEvent(screenType, uIScreenEvent);
+            screenManager.ScreenEvent(screenType, uIScreenEvent,screenTabType);
         }
     }
 }
