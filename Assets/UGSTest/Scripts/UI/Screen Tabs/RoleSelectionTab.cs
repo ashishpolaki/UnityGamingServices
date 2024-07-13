@@ -31,6 +31,7 @@ namespace UI.Screen.Tab
         private void JoinGame()
         {
             UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Close);
+            UIController.Instance.ScreenEvent(ScreenType.Client, UIScreenEvent.Open);
         }
         private void HostGame()
         {

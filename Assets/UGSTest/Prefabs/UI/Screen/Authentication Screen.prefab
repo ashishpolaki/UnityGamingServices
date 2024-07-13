@@ -317,7 +317,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   screenType: 0
-  defaultOpenTab: 2
+  defaultOpenTab: 1
   tabs:
   - {fileID: 2311583259086517473}
   - {fileID: 3771255658057623231}
@@ -1067,6 +1067,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 991496053643781033}
     m_Modifications:
+    - target: {fileID: 432713890302398100, guid: d40956551f09f6a40aaea0050baa17c6, type: 3}
+      propertyPath: m_Text
+      value: '@Shish100'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4441007546851407539, guid: d40956551f09f6a40aaea0050baa17c6, type: 3}
+      propertyPath: m_Text
+      value: Ashish
+      objectReference: {fileID: 0}
     - target: {fileID: 6285859052451820226, guid: d40956551f09f6a40aaea0050baa17c6, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

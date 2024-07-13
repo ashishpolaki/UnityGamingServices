@@ -42,7 +42,6 @@ namespace UI.Screen.Tab
         private async void GenerateRandomPlayerName()
         {
             await GameManager.Instance.Authentication.GenerateRandomPlayerName();
-            Debug.Log("OpenThistab");
             UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Show, ScreenTabType.RoleSelection);
         }
     }

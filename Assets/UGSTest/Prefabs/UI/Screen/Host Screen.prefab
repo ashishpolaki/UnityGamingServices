@@ -848,7 +848,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Schedule Races
+  m_text: Schedule RaceTimings
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -939,27 +939,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2424822787358014075, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2424822787358014075, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2424822787358014075, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
       propertyPath: m_AnchorMin.x
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2424822787358014075, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2424822787358014075, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 864.455
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2424822787358014075, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 1233.7988
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2424822787358014075, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1012,10 +1012,6 @@ PrefabInstance:
     - target: {fileID: 5993506968066583679, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
       propertyPath: m_Name
       value: RaceScheduleTab
-      objectReference: {fileID: 0}
-    - target: {fileID: 5993506968066583679, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

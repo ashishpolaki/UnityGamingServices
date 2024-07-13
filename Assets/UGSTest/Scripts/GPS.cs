@@ -5,11 +5,11 @@ using UnityEngine.Android;
 
 public class GPS
 {
-    public float CurrentLocationLatitude
+    public double CurrentLocationLatitude
     {
         get; private set;
     }
-    public float CurrentLocationLongitude
+    public double CurrentLocationLongitude
     {
         get; private set;
     }
@@ -30,6 +30,12 @@ public class GPS
         if (!isInitialized)
         {
             Debug.Log("Timed out");
+            return false;
+        }
+
+        if(!Permission.HasUserAuthorizedPermission(Permission.FineLocation) || !Permission.HasUserAuthorizedPermission(Permission.CoarseLocation))
+        {
+            Debug.Log("Location Permission Denied");
             return false;
         }
 
@@ -70,7 +76,7 @@ public class DistanceCalculator
     /// <param name="lat2"></param>
     /// <param name="lon2"></param>
     /// <returns></returns>
-    public static double CalculateHaversineDistance(double lat1, double lon1, double lat2, double lon2)
+    public static float CalculateHaversineDistance(double lat1, double lon1, double lat2, double lon2)
     {
         double dLat = ToRadians(lat2 - lat1);
         double dLon = ToRadians(lon2 - lon1);
@@ -82,7 +88,7 @@ public class DistanceCalculator
         double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
         double distance = EarthRadiusKm * c;
         distance = ConvertKilometersToMeters(distance);
-        return distance;
+        return (float)distance;
     }
 
     public static double ToRadians(double angle)

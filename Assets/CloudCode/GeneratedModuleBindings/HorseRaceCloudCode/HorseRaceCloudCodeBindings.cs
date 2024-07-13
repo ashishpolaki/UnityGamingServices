@@ -22,18 +22,10 @@ namespace Unity.Services.CloudCode.GeneratedBindings
             await k_Service.CallModuleEndpointAsync("HorseRaceCloudCode", "RaceScheduleTimings",
                new Dictionary<string, object>() { { "playerID", _playerID }, { "raceData", _raceData } });
         }
+        public async Task<string> VenueCheckIn(string checkInData)
+        {
+           return await k_Service.CallModuleEndpointAsync("HorseRaceCloudCode", "CheckedInVenue",
+                new Dictionary<string, object>() { { "checkInData", checkInData } });
+        }
     }
-    //    {
-    //  "PlayerID": "unique_player_id",
-    //  "CurrentCheckIns": {
-    //    "2024-07-10": 3,
-    //    "2024-07-11": 5,
-    //    // ... more recent dates and their check-ins
-    //  },
-    //  "ArchivedCheckIns": {
-    //    "2024-06": 150,
-    //    "2024-05": 120,
-    //    // ... more month-year summaries and their total check-ins
-    //  }
-    //}
 }

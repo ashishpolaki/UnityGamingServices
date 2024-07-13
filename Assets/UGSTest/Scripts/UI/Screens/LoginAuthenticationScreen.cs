@@ -26,7 +26,10 @@ namespace UI.Screen
         }
         private void OnDisable()
         {
+            if (GameManager.Instance != null)
+            {
             GameManager.Instance.Authentication.OnSignedInEvent -= SignedIn;
+            }
       
             registerTabBtn.onClick.RemoveAllListeners();
             loginTabBtn.onClick.RemoveAllListeners();

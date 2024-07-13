@@ -103,5 +103,6 @@ public enum ScreenType
     RegisterVenue,
     CharacterCustomization,
     Host,
+    Client,
     None
 }
