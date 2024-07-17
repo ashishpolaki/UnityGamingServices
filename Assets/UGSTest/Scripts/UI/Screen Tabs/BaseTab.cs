@@ -31,9 +31,14 @@ namespace UI.Screen.Tab
 public enum ScreenTabType
 {
     None,
-    Login,
-    Register,
+    LoginPlayer,
+    RegisterPlayer,
     RaceSchedule,
     PlayerName,
     RoleSelection,
+    LobbyWait,
+    RaceLobby,
+    RegisterVenue,
+    RaceInProgress,
+    RaceResults
 }

@@ -1,16 +1,18 @@
 using Newtonsoft.Json;
+using System;
 using System.Threading.Tasks;
 using Unity.Services.CloudCode;
 using Unity.Services.CloudCode.GeneratedBindings;
+using Unity.Services.CloudCode.Subscriptions;
 using UnityEngine;
 
 namespace UGS
 {
     public class CloudCode
     {
-        public class RegisterHostItem
+        #region Classes
+        public class HostVenueData
         {
-            public string PlayerID { get; set; }
             public double Latitude { get; set; }
             public double Longitude { get; set; }
             public float Radius { get; set; }
@@ -19,8 +21,8 @@ namespace UGS
         {
             public string ScheduleStart { get; set; }
             public string ScheduleEnd { get; set; }
-            public string TimeGap { get; set; }
-            public string PreRaceWaitTime { get; set; }
+            public int TimeGap { get; set; }
+            public int PreRaceWaitTime { get; set; }
         }
         public class CheckInRequest
         {
@@ -28,8 +30,18 @@ namespace UGS
             public double Latitude { get; set; }
             public double Longitude { get; set; }
         }
+        public class JoinRaceResponse
+        {
+            public bool CanWaitInLobby { get; set; }
+            public string RaceTime { get; set; }
+            public string Message { get; set; }
+        }
+        #endregion
 
         private HorseRaceCloudCodeBindings module;
+
+        public event Action<string> OnRaceStarted;
+        public event Action<int> OnRaceResult;
 
         public CloudCode()
         {
@@ -41,8 +53,29 @@ namespace UGS
             await Task.Delay(1000);
             module = new HorseRaceCloudCodeBindings(CloudCodeService.Instance);
         }
+        public Task SubscribeToPlayerMessages()
+        {
+            var callbacks = new SubscriptionEventCallbacks();
+            callbacks.MessageReceived += @event =>
+            {
+                switch (@event.MessageType)
+                {
+                    case "RaceStart":
+                        OnRaceStarted?.Invoke(@event.Message);
+                        break;
+                    case "RaceResult":
+                        OnRaceResult?.Invoke(int.Parse(@event.Message));
+                        break;
+                    default:
+                        Debug.Log($"Got unsupported player Message:");
+                        break;
+                }
+            };
+            return CloudCodeService.Instance.SubscribeToPlayerMessagesAsync(callbacks);
+        }
 
-        public async Task RegisterVenue(RegisterHostItem registerHostItem)
+        //Methods
+        public async Task RegisterVenue(HostVenueData registerHostItem)
         {
             try
             {
@@ -54,31 +87,91 @@ namespace UGS
                 Debug.LogException(exception);
             }
         }
-        public async void ScheduleRaceTime(string playerID, RaceSchedule raceSchedule)
+        public async void ScheduleRaceTime( RaceSchedule raceSchedule)
         {
             try
             {
                 string jsonData = JsonConvert.SerializeObject(raceSchedule);
-                await module.ScheduleRaceTimings(playerID, jsonData);
+                await module.ScheduleRaceTimings( jsonData);
             }
             catch (CloudCodeException exception)
             {
                 Debug.LogException(exception);
             }
         }
-        public async Task<string> CheckIn(CheckInRequest checkInRequest)
+        public async Task<string> CheckIn(double latitude, double longitude)
         {
             try
             {
-                string jsonData = JsonConvert.SerializeObject(checkInRequest);
-                var result = await module.VenueCheckIn(jsonData);
+                var result = await module.VenueCheckIn(latitude, longitude);
                 return result;
             }
             catch (CloudCodeException exception)
             {
                 Debug.LogException(exception);
             }
-            return null;
+            return string.Empty;
+        }
+        public async Task<string> JoinRace(double latitude, double longitude)
+        {
+            string result = string.Empty;
+            try
+            {
+                result = await module.JoinRace(latitude, longitude);
+            }
+            catch (CloudCodeException exception)
+            {
+                Debug.LogException(exception);
+            }
+            return result;
+        }
+        public async Task<string> ConfirmRaceCheckIn(string playerID)
+        {
+            string result = string.Empty;
+            try
+            {
+                result = await module.ConfirmRaceCheckIn(playerID);
+            }
+            catch (CloudCodeException exception)
+            {
+                Debug.LogException(exception);
+            }
+            return result;
+        }
+        public async Task<string> GetLobbyPlayers()
+        {
+            string result = string.Empty;
+            try
+            {
+                result = await module.GetLobbyPlayers();
+            }
+            catch (CloudCodeException exception)
+            {
+                Debug.LogException(exception);
+            }
+            return result;
+        }
+        public async Task StartRace(string horsesInRaceOrder)
+        {
+            try
+            {
+                await module.StartRace(horsesInRaceOrder);
+            }
+            catch (CloudCodeException exception)
+            {
+                Debug.LogException(exception);
+            }
+        }
+        public async Task SendRaceResults(int winnerHorseNumber)
+        {
+            try
+            {
+                await module.SendRaceResults(winnerHorseNumber);
+            }
+            catch (CloudCodeException exception)
+            {
+                Debug.LogException(exception);
+            }
         }
     }
 

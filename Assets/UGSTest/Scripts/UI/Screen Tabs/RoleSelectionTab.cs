@@ -26,7 +26,7 @@ namespace UI.Screen.Tab
         }
         private void SetPlayerName()
         {
-            playerNameTxt.text = "Player Name : " + GameManager.Instance.PlayerLoginData.PlayerName;
+            playerNameTxt.text = "Player Name : " + GameManager.Instance.PlayerData.PlayerName;
         }
         private void JoinGame()
         {

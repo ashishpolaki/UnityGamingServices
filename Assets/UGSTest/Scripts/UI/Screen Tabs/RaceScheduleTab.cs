@@ -13,76 +13,17 @@ namespace UI.Screen.Tab
         [SerializeField] private Button setScheduleBtn;
         [SerializeField] private TextMeshProUGUI errorMessageTxt;
 
-        [System.Serializable]
-        private class ScheduleTime
-        {
-            public bool IsAM
-            {
-                get
-                {
-                    return isAM;
-                }
-                set
-                {
-                    isAM = value;
-                    meridiemText.text = isAM ? "AM" : "PM";
-                }
-            }
-            private bool isAM;
-            public Button hourUpBtn;
-            public Button hourDownBtn;
-            public Button minutesUpBtn;
-            public Button minutesDownBtn;
-            public Button meridiemBtn;
-            public TextMeshProUGUI hourText;
-            public TextMeshProUGUI minutesText;
-            public TextMeshProUGUI meridiemText;
-        }
-        [SerializeField] private ScheduleTime startSchedule;
-        [SerializeField] private ScheduleTime endSchedule;
-        [SerializeField] private int hourChangeStep = 1;
-        [SerializeField] private int minuteChangeStep = 30;
-
-        [SerializeField] private int hourMinLimit = 1;
-        [SerializeField] private int hourMaxLimit = 12;
-        [SerializeField] private int minuteMinLimit = 0;
-        [SerializeField] private int minuteMaxLimit = 59;
+        [SerializeField] private TimeAdjustmentSettings startSchedule;
+        [SerializeField] private TimeAdjustmentSettings endSchedule;
 
         private void OnEnable()
         {
             setScheduleBtn.onClick.AddListener(OnSetScheduleBtnClick);
-
-            //Start Schedule
-            startSchedule.hourUpBtn.onClick.AddListener(() => AdjustTime(startSchedule.hourText, -hourChangeStep, hourMinLimit, hourMaxLimit));
-            startSchedule.hourDownBtn.onClick.AddListener(() => AdjustTime(startSchedule.hourText, hourChangeStep, hourMinLimit, hourMaxLimit));
-            startSchedule.minutesUpBtn.onClick.AddListener(() => AdjustTime(startSchedule.minutesText, -minuteChangeStep, minuteMinLimit, minuteMaxLimit));
-            startSchedule.minutesDownBtn.onClick.AddListener(() => AdjustTime(startSchedule.minutesText, minuteChangeStep, minuteMinLimit, minuteMaxLimit));
-            startSchedule.meridiemBtn.onClick.AddListener(() => startSchedule.IsAM = !startSchedule.IsAM);
-
-            // End Schedule
-            endSchedule.hourUpBtn.onClick.AddListener(() => AdjustTime(endSchedule.hourText, -hourChangeStep, hourMinLimit, hourMaxLimit));
-            endSchedule.hourDownBtn.onClick.AddListener(() => AdjustTime(endSchedule.hourText, hourChangeStep, hourMinLimit, hourMaxLimit));
-            endSchedule.minutesUpBtn.onClick.AddListener(() => AdjustTime(endSchedule.minutesText, -minuteChangeStep, minuteMinLimit, minuteMaxLimit));
-            endSchedule.minutesDownBtn.onClick.AddListener(() => AdjustTime(endSchedule.minutesText, minuteChangeStep, minuteMinLimit, minuteMaxLimit));
-            endSchedule.meridiemBtn.onClick.AddListener(() => endSchedule.IsAM = !endSchedule.IsAM);
         }
 
         private void OnDisable()
         {
             setScheduleBtn.onClick.RemoveListener(OnSetScheduleBtnClick);
-            //Start Schedule
-            startSchedule.hourUpBtn.onClick.RemoveAllListeners();
-            startSchedule.hourDownBtn.onClick.RemoveAllListeners();
-            startSchedule.minutesUpBtn.onClick.RemoveAllListeners();
-            startSchedule.minutesDownBtn.onClick.RemoveAllListeners();
-            startSchedule.meridiemBtn.onClick.RemoveAllListeners();
-
-            //End Schedule
-            endSchedule.hourUpBtn.onClick.RemoveAllListeners();
-            endSchedule.hourDownBtn.onClick.RemoveAllListeners();
-            endSchedule.minutesUpBtn.onClick.RemoveAllListeners();
-            endSchedule.minutesDownBtn.onClick.RemoveAllListeners();
-            endSchedule.meridiemBtn.onClick.RemoveAllListeners();
         }
 
         private void AdjustTime(TextMeshProUGUI timeText, int adjustment, int min, int max)
@@ -128,8 +69,8 @@ namespace UI.Screen.Tab
 
         private void OnSetScheduleBtnClick()
         {
-            string scheduleStartString = $"{startSchedule.hourText.text}:{startSchedule.minutesText.text} {startSchedule.meridiemText.text}";
-            string scheduleEndString = $"{endSchedule.hourText.text}:{endSchedule.minutesText.text} {endSchedule.meridiemText.text}";
+            string scheduleStartString = $"{startSchedule.ReturnTime()}";
+            string scheduleEndString = $"{endSchedule.ReturnTime()}";
             //Convert to Utc
             scheduleStartString = ConvertToUTC(scheduleStartString);
             scheduleEndString = ConvertToUTC(scheduleEndString);
@@ -158,12 +99,12 @@ namespace UI.Screen.Tab
             }
 
             //Set the schedule
-            GameManager.Instance.CloudCode.ScheduleRaceTime(GameManager.Instance.PlayerLoginData.PlayerID, new UGS.CloudCode.RaceSchedule
+            GameManager.Instance.CloudCode.ScheduleRaceTime(new UGS.CloudCode.RaceSchedule
             {
                 ScheduleStart = scheduleStartString,
                 ScheduleEnd = scheduleEndString,
-                TimeGap = timeGap_Input.text,
-                PreRaceWaitTime = preRaceWaitTime_Input.text
+                TimeGap = int.Parse(timeGap_Input.text),
+                PreRaceWaitTime = int.Parse(preRaceWaitTime_Input.text)
             });
             Close();
         }

@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.Screen
+namespace UI.Screen.Tab
 {
-    public class RegisterVenueScreen : BaseScreen
+    public class RegisterVenueTab : BaseTab
     {
         [SerializeField] private InputField locationLatitude;
         [SerializeField] private InputField locationLongitude;
@@ -37,26 +37,24 @@ namespace UI.Screen
             if (string.IsNullOrEmpty(locationLatitude.text) || string.IsNullOrEmpty(locationLongitude.text) || string.IsNullOrEmpty(radiusInput.text))
             {
                 Debug.Log("Please fill all the fields");
-                 return;
+                return;
             }
 
             double latitude = double.Parse(locationLatitude.text);
             double longitude = double.Parse(locationLongitude.text);
-            latitude = 17.48477376610915;
-            longitude = 78.41440387735862;
             float radius = float.Parse(radiusInput.text);
+            //latitude = 17.48477376610915;
+            //longitude = 78.41440387735862;
 
-            UGS.CloudCode.RegisterHostItem registerHostItem = new UGS.CloudCode.RegisterHostItem
+            UGS.CloudCode.HostVenueData registerHostItem = new UGS.CloudCode.HostVenueData
             {
-                PlayerID = GameManager.Instance.PlayerLoginData.PlayerID,
                 Latitude = latitude,
                 Longitude = longitude,
                 Radius = radius
             };
             await GameManager.Instance.CloudCode.RegisterVenue(registerHostItem);
-
-            UIController.Instance.ScreenEvent(ScreenType, UIScreenEvent.Hide);
-            UIController.Instance.ScreenEvent(ScreenType.Host, UIScreenEvent.Show);
+            gameObject.SetActive(false);
         }
+
     }
 }

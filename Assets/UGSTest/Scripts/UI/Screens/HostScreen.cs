@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,12 +23,11 @@ namespace UI.Screen
         }
         private void RegisterVenue()
         {
-            UIController.Instance.ScreenEvent(ScreenType, UIScreenEvent.Hide);
-            UIController.Instance.ScreenEvent(ScreenType.RegisterVenue, UIScreenEvent.Open);
+           OpenTab(ScreenTabType.RegisterVenue);
         }
         private void StartRace()
         {
-
+            OpenTab(ScreenTabType.RaceLobby);
         }
         private void ScheduleRace()
         {

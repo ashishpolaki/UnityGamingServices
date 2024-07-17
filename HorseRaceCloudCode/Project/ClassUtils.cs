@@ -1,51 +1,78 @@
-﻿using System;
-
-namespace HorseRaceCloudCode
+﻿namespace HorseRaceCloudCode
 {
     internal class ClassUtils
     {
     }
-    public class RegisterHostItem
+    public class HostVenueData
     {
         public string PlayerID { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
         public float Radius { get; set; }
+
+        public HostVenueData()
+        {
+            PlayerID = string.Empty;
+        }
     }
 
-    public class CheckInResponse
+    public class CheckInRequest
     {
         public string PlayerID { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
+
+        public CheckInRequest()
+        {
+            PlayerID = string.Empty;
+        }
     }
-    public class CheckInAttendance
+    public class PlayerCheckIn
     {
         public string Date { get; set; }
         public string LastCheckInTime { get; set; }
         public int Count { get; set; }
-    }
-    public static class DistanceCalculator
-    {
-        public static float CalculateHaversineDistance(double lat1, double lon1, double lat2, double lon2)
+
+        public PlayerCheckIn()
         {
-            double EarthRadiusKm = 6371;
-
-            double dLat = ToRadians(lat2 - lat1);
-            double dLon = ToRadians(lon2 - lon1);
-
-            double a = Math.Pow(Math.Sin(dLat / 2), 2) +
-                       Math.Cos(ToRadians(lat1)) * Math.Cos(ToRadians(lat2)) *
-                       Math.Pow(Math.Sin(dLon / 2), 2);
-
-            double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-            double distance = EarthRadiusKm * c;
-            distance = distance * 1000; //Convert to meters
-            return (float)distance;
+            Date = string.Empty;
+            LastCheckInTime = string.Empty;
         }
-        public static double ToRadians(double angle)
+    }
+    public class RaceScheduleData
+    {
+        public string ScheduleStart { get; set; }
+        public string ScheduleEnd { get; set; }
+        public int TimeGap { get; set; }
+        public int PreRaceWaitTime { get; set; }
+
+        public RaceScheduleData()
         {
-            return Math.PI * angle / 180.0;
+            ScheduleStart = string.Empty;
+            ScheduleEnd = string.Empty;
+        }
+    }
+    public class JoinRaceResponse
+    {
+        public bool CanWaitInLobby { get; set; } 
+        public string RaceTime { get; set; }
+        public string Message { get; set; }
+
+        public JoinRaceResponse()
+        {
+            CanWaitInLobby = false;
+            RaceTime = string.Empty;
+            Message = string.Empty;
+        }
+    }
+    public class RaceLobbyData
+    {
+        public string PlayerID { get; set; }
+        public int HorseNumber { get; set; }
+
+        public RaceLobbyData()
+        {
+            PlayerID = string.Empty;
         }
     }
 }

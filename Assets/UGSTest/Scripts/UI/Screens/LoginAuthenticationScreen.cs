@@ -39,16 +39,16 @@ namespace UI.Screen
 
         private void OpenLoginTab()
         {
-            ButtonInteractable(ScreenTabType.Login);
-            CloseTab(ScreenTabType.Register);
-            OpenTab(ScreenTabType.Login);
+            ButtonInteractable(ScreenTabType.LoginPlayer);
+            CloseTab(ScreenTabType.RegisterPlayer);
+            OpenTab(ScreenTabType.LoginPlayer);
         }
 
         private void OpenRegisterTab()
         {
-            ButtonInteractable(ScreenTabType.Register);
-            CloseTab(ScreenTabType.Login);
-            OpenTab(ScreenTabType.Register);
+            ButtonInteractable(ScreenTabType.RegisterPlayer);
+            CloseTab(ScreenTabType.LoginPlayer);
+            OpenTab(ScreenTabType.RegisterPlayer);
         }
         private void SignInAnonymously()
         {
@@ -56,8 +56,8 @@ namespace UI.Screen
         }
         private void ButtonInteractable(ScreenTabType screenType)
         {
-            registerTabBtn.interactable = !(screenType == ScreenTabType.Register);
-            loginTabBtn.interactable = !(screenType == ScreenTabType.Login);
+            registerTabBtn.interactable = !(screenType == ScreenTabType.RegisterPlayer);
+            loginTabBtn.interactable = !(screenType == ScreenTabType.LoginPlayer);
         }
 
         #region Subscribe Methods

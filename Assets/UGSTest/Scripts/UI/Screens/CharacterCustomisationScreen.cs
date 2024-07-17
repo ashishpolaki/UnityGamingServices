@@ -9,7 +9,7 @@ namespace UI.Screen
         private void Start()
         {
             //If player name is empty then open player name tab
-            if (string.IsNullOrEmpty(GameManager.Instance.PlayerLoginData.PlayerName))
+            if (string.IsNullOrEmpty(GameManager.Instance.PlayerData.PlayerName))
             {
                 OpenTab(ScreenTabType.PlayerName);
             }

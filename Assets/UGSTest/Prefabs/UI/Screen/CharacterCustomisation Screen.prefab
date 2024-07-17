@@ -62,7 +62,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -154,6 +154,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerNameTab
       objectReference: {fileID: 0}
+    - target: {fileID: 3615538536530816372, guid: 0ea3b45dcd4280f42ba5e7db7ed93524, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4658829279477857136, guid: 0ea3b45dcd4280f42ba5e7db7ed93524, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -237,6 +241,14 @@ PrefabInstance:
     - target: {fileID: 4658829279477857136, guid: 0ea3b45dcd4280f42ba5e7db7ed93524, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6323351003516457182, guid: 0ea3b45dcd4280f42ba5e7db7ed93524, type: 3}
+      propertyPath: m_text
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6323351003516457182, guid: 0ea3b45dcd4280f42ba5e7db7ed93524, type: 3}
+      propertyPath: m_fontSize
+      value: 36
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -362,6 +374,10 @@ PrefabInstance:
     - target: {fileID: 8255924356658683377, guid: 4a4d231b3b166c141bf54ecf6652e859, type: 3}
       propertyPath: m_Name
       value: RoleSelectionTab
+      objectReference: {fileID: 0}
+    - target: {fileID: 8255924356658683377, guid: 4a4d231b3b166c141bf54ecf6652e859, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

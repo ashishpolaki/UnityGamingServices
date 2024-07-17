@@ -11,28 +11,24 @@ namespace HorseRaceCloudCode
     public class VenueRegistration
     {
         private readonly IGameApiClient gameApiClient;
-        private readonly IPushClient pushClient;
-        private readonly ILogger<VenueRegistration> _logger;
 
         public VenueRegistration(IGameApiClient _gameApiClient, IPushClient _pushClient, ILogger<VenueRegistration> logger)
         {
             this.gameApiClient = _gameApiClient;
-            this.pushClient = _pushClient;
-            this._logger = logger;
         }
 
         [CloudCodeFunction("RegisterVenue")]
         public async Task SetVenue(IExecutionContext context, string venueData)
         {
-            RegisterHostItem? registerItem = JsonConvert.DeserializeObject<RegisterHostItem>(venueData);
+            HostVenueData? registerItem = JsonConvert.DeserializeObject<HostVenueData>(venueData);
             if (registerItem != null)
             {
                 //Register host data in VenuesList
                 await gameApiClient.CloudSaveData.SetCustomItemAsync(context, context.ServiceToken, context.ProjectId,
-                                       "HostVenue", new SetItemBody(registerItem.PlayerID, venueData));
+                                       "HostVenue", new SetItemBody(context.PlayerId, venueData));
 
                 //Venue Players
-                await gameApiClient.CloudSaveData.SetCustomItemBatchAsync(context, context.ServiceToken, context.ProjectId, registerItem.PlayerID,
+                await gameApiClient.CloudSaveData.SetCustomItemBatchAsync(context, context.ServiceToken, context.ProjectId, context.PlayerId,
                 new SetItemBatchBody(new List<SetItemBody>()
                    {
                            new ("RaceJoinCode",""),
@@ -45,10 +41,10 @@ namespace HorseRaceCloudCode
         }
 
         [CloudCodeFunction("RaceScheduleTimings")]
-        public async Task ScheduleRaceTimings(IExecutionContext context, string playerID, string raceData)
+        public async Task ScheduleRaceTimings(IExecutionContext context, string raceData)
         {
             await gameApiClient.CloudSaveData.SetCustomItemAsync(context, context.ServiceToken, context.ProjectId,
-                                       playerID, new SetItemBody("RaceSchedule", raceData));
+                                       context.PlayerId, new SetItemBody("RaceSchedule", raceData));
         }
 
     }

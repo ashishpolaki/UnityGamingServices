@@ -22,6 +22,12 @@ namespace UI.Screen.Tab
             loginBtn.onClick.RemoveAllListeners();
             GameManager.Instance.Authentication.OnSignInFailed -= OnSignInFailed;
         }
+        private void Start()
+        {
+            username_Input.text = "Ashish2";
+            password_Input.text = "@Shish100";
+        }
+        
         private void OnSignInFailed(string message)
         {
             errorMessageTxt.text = message;

@@ -1,5 +1,7 @@
-using UGS;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
+using UGS;
 
 public class GameManager : MonoBehaviour
 {
@@ -18,11 +20,16 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public List<int> horsesInRaceOrderList = new List<int>();
+
     #region Properties
-    public PlayerLoginData PlayerLoginData { get; private set; }
+    public PlayerData PlayerData { get; private set; }
+    public InGameData GameData { get; private set; }
+    public GPS GPS { get; private set; }
+
+    //UGS
     public Authentication Authentication { get; private set; }
     public CloudCode CloudCode { get; private set; }
-    public GPS GPS { get; private set; }
     #endregion
 
     #region Unity Methods
@@ -37,18 +44,17 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
         Initialize();
         InitializeUGS();
     }
     private void OnEnable()
     {
-        Authentication.OnSignedInEvent += SavePlayerLoginData;
+        Authentication.OnSignedInEvent += LoginSuccessful;
         Authentication.OnPlayerNameChanged += HandlePlayerNameChangeEvent;
     }
     private void OnDisable()
     {
-        Authentication.OnSignedInEvent -= SavePlayerLoginData;
+        Authentication.OnSignedInEvent -= LoginSuccessful;
         Authentication.OnPlayerNameChanged -= HandlePlayerNameChangeEvent;
         Authentication.DeSubscribeEvents();
     }
@@ -60,7 +66,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private void Initialize()
     {
-        PlayerLoginData = new PlayerLoginData();
+        PlayerData = new PlayerData();
+        GameData = new InGameData();
         GPS = new GPS();
     }
     /// <summary>
@@ -72,22 +79,18 @@ public class GameManager : MonoBehaviour
         CloudCode = new CloudCode();
     }
     #endregion
-
-    #region Public Methods
-    //Save Player Data on player login
-    private void SavePlayerLoginData()
+    private void LoginSuccessful()
     {
-        PlayerLoginData.SetPlayerData(Authentication);
+        CloudCode.SubscribeToPlayerMessages();
+        PlayerData.SetPlayerData(Authentication);
     }
     private void HandlePlayerNameChangeEvent(string _playerName)
     {
-        PlayerLoginData.SetPlayerData(playerName : _playerName);
-    } 
-    #endregion
-
+        PlayerData.SetPlayerData(playerName: _playerName);
+    }
 }
 [System.Serializable]
-public class PlayerLoginData
+public class PlayerData
 {
     public string PlayerID { get; private set; }
     public string PlayerName { get; private set; }
@@ -103,14 +106,44 @@ public class PlayerLoginData
         PlayerName = authentication.PlayerName;
     }
 
-    public static string SerializePlayerData(PlayerLoginData data)
+
+    public static string SerializePlayerData(PlayerData data)
     {
         return JsonUtility.ToJson(data);
     }
 
-    public static PlayerLoginData DeserializePlayerData(string jsonData)
+    public static PlayerData DeserializePlayerData(string jsonData)
     {
-        return JsonUtility.FromJson<PlayerLoginData>(jsonData);
+        return JsonUtility.FromJson<PlayerData>(jsonData);
+    }
+}
+
+[System.Serializable]
+public class InGameData
+{
+    public DateTime RaceTime { get; private set; }
+    public bool CanWaitInLobby { get; private set; }
+    public DateTime CurrentTime { get; private set; }
+    public int HorseNumber { get; private set; }
+    public int WinnerHorseNumber { get; private set; }
+    public void SetGameData(bool _CanWaitInLobby, DateTime raceTime, DateTime currentTime)
+    {
+        RaceTime = raceTime;
+        CurrentTime = currentTime;
+        CanWaitInLobby = _CanWaitInLobby;
+    }
+    public void SetHorseNumber(int _horseNumber)
+    {
+        HorseNumber = _horseNumber;
+    }
+    public void SetWinnerHorseNumber(int _winnerHorseNumber)
+    {
+        WinnerHorseNumber = _winnerHorseNumber;
+    }
+
+    public bool IsRaceWinner()
+    {
+        return WinnerHorseNumber == HorseNumber;
     }
 }
 
