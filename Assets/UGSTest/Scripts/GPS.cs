@@ -14,13 +14,18 @@ public class GPS
         get; private set;
     }
 
-    public async Task<bool> TryGetLocationAsync()
+    public void RequestPermission()
     {
         if (!Permission.HasUserAuthorizedPermission(Permission.FineLocation))
         {
             Permission.RequestUserPermission(Permission.FineLocation);
             Permission.RequestUserPermission(Permission.CoarseLocation);
         }
+    }
+
+    public async Task<bool> TryGetLocationAsync()
+    {
+        RequestPermission();
 
         // Start service before querying location
         Input.location.Start();

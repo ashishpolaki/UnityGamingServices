@@ -15,26 +15,28 @@ namespace UI.Screen.Tab
         {
             loginBtn.onClick.AddListener(() => Login());
             GameManager.Instance.Authentication.OnSignInFailed += OnSignInFailed;
-
         }
         private void OnDisable()
         {
             loginBtn.onClick.RemoveAllListeners();
-            GameManager.Instance.Authentication.OnSignInFailed -= OnSignInFailed;
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.Authentication.OnSignInFailed -= OnSignInFailed;
+            }
         }
         private void Start()
         {
-            username_Input.text = "Ashish2";
-            password_Input.text = "@Shish100";
+            //username_Input.text = "Ashish2";
+            //password_Input.text = "@Shish100";
         }
-        
+
         private void OnSignInFailed(string message)
         {
             errorMessageTxt.text = message;
         }
         private void Login()
         {
-            if(string.IsNullOrEmpty(username_Input.text) || string.IsNullOrEmpty(password_Input.text))
+            if (string.IsNullOrEmpty(username_Input.text) || string.IsNullOrEmpty(password_Input.text))
             {
                 errorMessageTxt.text = "Please fill all the fields";
                 return;

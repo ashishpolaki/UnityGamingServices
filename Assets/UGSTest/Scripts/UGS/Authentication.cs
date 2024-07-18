@@ -118,6 +118,7 @@ namespace UGS
                 Debug.LogException(ex);
             }
         }
+
         public async void SignInWithUsernamePasswordAsync(string username, string password)
         {
             try
@@ -137,7 +138,6 @@ namespace UGS
                 Debug.Log(ex.Message);
             }
         }
-
 
         public async void SignInAnonymouslyAsync()
         {
@@ -165,9 +165,31 @@ namespace UGS
                 Debug.LogException(ex);
             }
         }
+
+        public async void CacheSignInAsync()
+        {
+            //Random signin for anonymous user with random username
+            try
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
+            catch (AuthenticationException ex)
+            {
+                // Compare error code to AuthenticationErrorCodes
+                // Notify the player with the proper error message
+                Debug.LogException(ex);
+            }
+            catch (RequestFailedException ex)
+            {
+                // Compare error code to CommonErrorCodes
+                // Notify the player with the proper error message
+                Debug.LogException(ex);
+            }
+        }
+
         public void Signout()
         {
-            AuthenticationService.Instance.SignOut();
+            AuthenticationService.Instance.SignOut(true);
         }
 
         #region Subscribe/Desubscribe Methods
@@ -207,6 +229,7 @@ namespace UGS
         }
         private void HandleSignOutEvent()
         {
+            OnSignedOut?.Invoke();
             Debug.Log("Player signed out.");
         }
         private void HandleSessionExpireEvent()

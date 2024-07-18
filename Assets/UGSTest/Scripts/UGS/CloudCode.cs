@@ -17,18 +17,12 @@ namespace UGS
             public double Longitude { get; set; }
             public float Radius { get; set; }
         }
-        public class RaceSchedule
+        public class HostScheduleRace
         {
             public string ScheduleStart { get; set; }
             public string ScheduleEnd { get; set; }
             public int TimeGap { get; set; }
             public int PreRaceWaitTime { get; set; }
-        }
-        public class CheckInRequest
-        {
-            public string PlayerID { get; set; }
-            public double Latitude { get; set; }
-            public double Longitude { get; set; }
         }
         public class JoinRaceResponse
         {
@@ -87,7 +81,7 @@ namespace UGS
                 Debug.LogException(exception);
             }
         }
-        public async void ScheduleRaceTime( RaceSchedule raceSchedule)
+        public async void ScheduleRaceTime(HostScheduleRace raceSchedule)
         {
             try
             {
@@ -99,11 +93,11 @@ namespace UGS
                 Debug.LogException(exception);
             }
         }
-        public async Task<string> CheckIn(double latitude, double longitude)
+        public async Task<string> CheckIn(double latitude, double longitude,string dateTime)
         {
             try
             {
-                var result = await module.VenueCheckIn(latitude, longitude);
+                var result = await module.VenueCheckIn(latitude, longitude,dateTime);
                 return result;
             }
             catch (CloudCodeException exception)
@@ -112,12 +106,13 @@ namespace UGS
             }
             return string.Empty;
         }
-        public async Task<string> JoinRace(double latitude, double longitude)
+
+        public async Task<int> RaceJoin(double latitude, double longitude, string dateTime)
         {
-            string result = string.Empty;
+            int result = 0;
             try
             {
-                result = await module.JoinRace(latitude, longitude);
+                result = await module.JoinRace(latitude, longitude, dateTime);
             }
             catch (CloudCodeException exception)
             {
@@ -125,12 +120,26 @@ namespace UGS
             }
             return result;
         }
-        public async Task<string> ConfirmRaceCheckIn(string playerID)
+
+        public async Task<string> RequestRaceJoin(double latitude, double longitude, string dateTime)
         {
             string result = string.Empty;
             try
             {
-                result = await module.ConfirmRaceCheckIn(playerID);
+                result = await module.RequestRaceJoin(latitude, longitude, dateTime);
+            }
+            catch (CloudCodeException exception)
+            {
+                Debug.LogException(exception);
+            }
+            return result;
+        }
+        public async Task<string> ConfirmRaceCheckIn(double latitude, double longitude)
+        {
+            string result = string.Empty;
+            try
+            {
+                result = await module.ConfirmRaceCheckIn(latitude,longitude);
             }
             catch (CloudCodeException exception)
             {

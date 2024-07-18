@@ -14,7 +14,10 @@ public class GameManager : MonoBehaviour
             if (instance == null)
             {
                 instance = FindObjectOfType<GameManager>();
-                DontDestroyOnLoad(instance.gameObject);
+                if (instance != null)
+                {
+                    DontDestroyOnLoad(instance.gameObject);
+                }
             }
             return instance;
         }
@@ -88,6 +91,12 @@ public class GameManager : MonoBehaviour
     {
         PlayerData.SetPlayerData(playerName: _playerName);
     }
+
+    public void ResetData()
+    {
+        PlayerData = new PlayerData();
+        GameData = new InGameData();
+    }
 }
 [System.Serializable]
 public class PlayerData
@@ -123,13 +132,11 @@ public class InGameData
 {
     public DateTime RaceTime { get; private set; }
     public bool CanWaitInLobby { get; private set; }
-    public DateTime CurrentTime { get; private set; }
     public int HorseNumber { get; private set; }
     public int WinnerHorseNumber { get; private set; }
-    public void SetGameData(bool _CanWaitInLobby, DateTime raceTime, DateTime currentTime)
+    public void SetGameData(bool _CanWaitInLobby, DateTime raceTime)
     {
         RaceTime = raceTime;
-        CurrentTime = currentTime;
         CanWaitInLobby = _CanWaitInLobby;
     }
     public void SetHorseNumber(int _horseNumber)

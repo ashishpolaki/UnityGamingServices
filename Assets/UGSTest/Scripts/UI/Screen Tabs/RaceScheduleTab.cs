@@ -26,23 +26,6 @@ namespace UI.Screen.Tab
             setScheduleBtn.onClick.RemoveListener(OnSetScheduleBtnClick);
         }
 
-        private void AdjustTime(TextMeshProUGUI timeText, int adjustment, int min, int max)
-        {
-            int timeValue = int.Parse(timeText.text);
-            timeValue += adjustment;
-
-            // Adjust for the min-max format
-            if (timeValue < min)
-            {
-                timeValue = max;
-            }
-            else if (timeValue > max)
-            {
-                timeValue = min;
-            }
-            timeText.text = timeValue.ToString("D2"); // Formats the number to have at least two digits
-        }
-
         /// <summary>
         /// Converts the local time string to UTC time
         /// </summary>
@@ -99,7 +82,7 @@ namespace UI.Screen.Tab
             }
 
             //Set the schedule
-            GameManager.Instance.CloudCode.ScheduleRaceTime(new UGS.CloudCode.RaceSchedule
+            GameManager.Instance.CloudCode.ScheduleRaceTime(new UGS.CloudCode.HostScheduleRace
             {
                 ScheduleStart = scheduleStartString,
                 ScheduleEnd = scheduleEndString,

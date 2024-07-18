@@ -1,10 +1,5 @@
-using Newtonsoft.Json;
 using System;
 using System.Globalization;
-using System.Threading.Tasks;
-using TMPro;
-using Unity.Services.CloudCode;
-using Unity.Services.CloudCode.GeneratedBindings;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +9,7 @@ public class CheatCode : MonoBehaviour
 
     [SerializeField] private Button cheatButton;
     [SerializeField] private Button closeBtn;
+    [SerializeField] private Button saveBtn;
     [SerializeField] private GameObject cheatPanel;
     [SerializeField] private Toggle cheatToggle;
     [SerializeField] private InputField latitudeInput;
@@ -22,7 +18,12 @@ public class CheatCode : MonoBehaviour
     private bool IsCheatPanelActive;
     public bool IsCheatEnabled;
 
+    public string CheatDateTime { get; private set; }
+    public double Latitude { get; private set; }
+    public double Longitude { get; private set; }
+
     [SerializeField] private TimeAdjustmentSettings cheatTime;
+    [SerializeField] private DateSelectorUI dateSelectorUI;
 
     #region Unity Methods
     private void Awake()
@@ -33,6 +34,7 @@ public class CheatCode : MonoBehaviour
     {
         cheatButton.onClick.AddListener(() => CheatPanel());
         closeBtn.onClick.AddListener(() => CheatPanel());
+        saveBtn.onClick.AddListener(() => Save());
         cheatToggle.onValueChanged.AddListener((value) => CheatToggle(value));
     }
     private void OnDisable()
@@ -40,11 +42,14 @@ public class CheatCode : MonoBehaviour
         cheatButton.onClick.RemoveAllListeners();
         cheatToggle.onValueChanged.RemoveAllListeners();
         closeBtn.onClick.RemoveAllListeners();
+        saveBtn.onClick.RemoveAllListeners();
     }
     private void CheatPanel()
     {
         IsCheatPanelActive = !IsCheatPanelActive;
         cheatPanel.SetActive(IsCheatPanelActive);
+        dateSelectorUI.SetDate(DateTime.Now);
+        cheatTime.SetTime(DateTime.Now);
     }
     private void CheatToggle(bool _val)
     {
@@ -52,39 +57,18 @@ public class CheatCode : MonoBehaviour
     }
     #endregion
 
-    private string ConvertToUTC(string timeString)
+    private void Save()
     {
-        DateTime localDateTime = DateTime.ParseExact(timeString, "hh:mm tt", CultureInfo.InvariantCulture);
+        CheatDateTime = ConvertDateTimeToUTC(cheatTime.ReturnTime(), dateSelectorUI.ReturnDate());
+        Latitude = !string.IsNullOrEmpty(latitudeInput.text) ? double.Parse(latitudeInput.text) : 0;
+        Longitude = !string.IsNullOrEmpty(longitudeInput.text) ? double.Parse(longitudeInput.text) : 0;
+    }
+    private string ConvertDateTimeToUTC(string timeString, string dateString)
+    {
+        string dateTimeString = $"{dateString} {timeString}";
+        DateTime localDateTime = DateTime.ParseExact(dateTimeString, "dd-MM-yyyy hh:mm tt", CultureInfo.InvariantCulture);
         TimeZoneInfo localTimeZone = TimeZoneInfo.Local;
         DateTime utcDateTime = TimeZoneInfo.ConvertTimeToUtc(localDateTime, localTimeZone);
         return utcDateTime.ToString("yyyy-MM-dd HH:mm:ss");
-    }
-    public async Task<string> CheckIn()
-    {
-        string dateTimeString = ConvertToUTC(cheatTime.ReturnTime());
-
-        var checkInRequest = new UGS.CloudCode.CheckInRequest
-        {
-            PlayerID = GameManager.Instance.PlayerData.PlayerID,
-            Latitude = !string.IsNullOrEmpty(latitudeInput.text) ? double.Parse(latitudeInput.text) : 17.48477376610915,
-            Longitude = !string.IsNullOrEmpty(longitudeInput.text) ? double.Parse(longitudeInput.text) : 78.41440387735862,
-        };
-        try
-        {
-            string jsonData = JsonConvert.SerializeObject(checkInRequest);
-            HorseRaceCloudCodeBindings module = new HorseRaceCloudCodeBindings(CloudCodeService.Instance);
-            var result = await module.CheatVenueCheckIn(jsonData, dateTimeString);
-            return result;
-        }
-        catch (CloudCodeException exception)
-        {
-            Debug.LogException(exception);
-        }
-        return null;
-    }
-
-    public async Task JoinRaceRequest()
-    {
-
     }
 }

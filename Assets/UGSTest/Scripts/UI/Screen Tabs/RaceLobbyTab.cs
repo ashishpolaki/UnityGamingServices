@@ -16,13 +16,18 @@ namespace UI.Screen.Tab
         {
             //Check in players
             string response = await GameManager.Instance.CloudCode.GetLobbyPlayers();
+            if (string.IsNullOrEmpty(response))
+            {
+                checkInPlayerNamesTxt.text = "No Players Checked In";
+                return;
+            }
             playerNames = JsonConvert.DeserializeObject<List<string>>(response);
             if (playerNames.Count > 0)
             {
                 checkInPlayerNamesTxt.text = string.Join("\n", playerNames);
             }
             //Enable button if more than 2 players are checked in.
-            //startRace_btn.interactable = (playerNames.Count > 2);
+            startRace_btn.interactable = (playerNames.Count > 1);
         }
         private void OnEnable()
         {

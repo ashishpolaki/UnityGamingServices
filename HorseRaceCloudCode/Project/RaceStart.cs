@@ -25,16 +25,14 @@ namespace HorseRaceCloudCode
         [CloudCodeFunction("GetRaceCheckInPlayers")]
         public async Task<string> GetRaceCheckInPlayers(IExecutionContext context)
         {
+            string message = string.Empty;
             List<string>? players = await Utils.GetCustomDataWithKey<List<string>>(context, gameApiClient, context.PlayerId, "RaceCheckIn");
 
             if (players.Count > 0)
             {
-                return JsonConvert.SerializeObject(players);
+                message = JsonConvert.SerializeObject(players);
             }
-            else
-            {
-                return "No player Joined the race";
-            }
+            return message;
         }
 
         [CloudCodeFunction("StartRace")]
@@ -88,6 +86,14 @@ namespace HorseRaceCloudCode
                 //Send Message to the players for Race Results
                 await pushClient.SendPlayerMessageAsync(context, $"{winnerHorseNumber}", "RaceResult", raceLobbyData[i].PlayerID);
             }
+
+            //Clear Lobby Data and Current Race Checkins
+            await gameApiClient.CloudSaveData.SetCustomItemBatchAsync(context, context.ServiceToken, context.ProjectId, context.PlayerId,
+                new SetItemBatchBody(new List<SetItemBody>()
+                   {
+                           new ("RaceLobby", ""),
+                           new ("RaceCheckIn", "")
+                   }));
         }
     }
 }

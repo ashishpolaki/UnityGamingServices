@@ -1,30 +1,19 @@
-﻿namespace HorseRaceCloudCode
+﻿using Microsoft.VisualBasic;
+using System;
+
+namespace HorseRaceCloudCode
 {
     internal class ClassUtils
     {
     }
     public class HostVenueData
     {
-        public string PlayerID { get; set; }
         public double Longitude { get; set; }
         public double Latitude { get; set; }
         public float Radius { get; set; }
 
         public HostVenueData()
         {
-            PlayerID = string.Empty;
-        }
-    }
-
-    public class CheckInRequest
-    {
-        public string PlayerID { get; set; }
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
-
-        public CheckInRequest()
-        {
-            PlayerID = string.Empty;
         }
     }
     public class PlayerCheckIn
@@ -55,13 +44,12 @@
     public class JoinRaceResponse
     {
         public bool CanWaitInLobby { get; set; } 
-        public string RaceTime { get; set; }
+        public DateTime RaceTime { get; set; }
         public string Message { get; set; }
 
         public JoinRaceResponse()
         {
             CanWaitInLobby = false;
-            RaceTime = string.Empty;
             Message = string.Empty;
         }
     }

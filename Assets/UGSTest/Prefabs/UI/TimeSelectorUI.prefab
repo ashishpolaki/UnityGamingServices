@@ -934,7 +934,7 @@ GameObject:
   - component: {fileID: 4441843230276770974}
   - component: {fileID: 2346597941392616741}
   m_Layer: 5
-  m_Name: TimeAdjustmentUI
+  m_Name: TimeSelectorUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

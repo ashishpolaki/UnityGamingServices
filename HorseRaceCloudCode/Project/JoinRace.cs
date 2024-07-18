@@ -21,11 +21,10 @@ namespace HorseRaceCloudCode
             this._logger = logger;
         }
 
-        [CloudCodeFunction("RaceJoinRequest")]
-        public async Task<string> RaceJoinRequest(IExecutionContext context, double latitude, double longitude)
+        [CloudCodeFunction("RaceJoin")]
+        public async Task<int> RaceJoin(IExecutionContext context, double latitude, double longitude, string dateTimeString)
         {
-            JoinRaceResponse? joinRaceResponse = new JoinRaceResponse();
-            DateTime currentDateTime = DateTime.UtcNow;
+            int horseNumber = 0;
 
             //Get host ID from player's current location
             string hostID = await Utils.GetHostID(context, gameApiClient, _logger, latitude, longitude);
@@ -33,13 +32,44 @@ namespace HorseRaceCloudCode
             //If the playerId and hostID are not empty, then proceed with the checkin process
             if (!string.IsNullOrEmpty(context.PlayerId) && !string.IsNullOrEmpty(hostID))
             {
-                //Return if the player is not in the host location
-                if (string.IsNullOrEmpty(hostID))
-                {
-                    joinRaceResponse.Message = "Player is not in Host Location";
-                    return JsonConvert.SerializeObject(joinRaceResponse);
-                }
 
+                List<RaceLobbyData> raceLobbyData = await Utils.GetCustomDataWithKey<List<RaceLobbyData>>(context, gameApiClient, hostID, "RaceLobby");
+
+                if (raceLobbyData.Count > 0)
+                {
+                    foreach (var playerRaceLobbyData in raceLobbyData)
+                    {
+                        if (playerRaceLobbyData.PlayerID == context.PlayerId)
+                        {
+                            horseNumber = playerRaceLobbyData.HorseNumber;
+                        }
+                    }
+                }
+            }
+
+            return horseNumber;
+        }
+
+        [CloudCodeFunction("RaceJoinRequest")]
+        public async Task<string> RaceJoinRequest(IExecutionContext context, double latitude, double longitude, string dateTimeString)
+        {
+            JoinRaceResponse? joinRaceResponse = new JoinRaceResponse();
+            DateTime currentDateTime = Utils.ParseDateTime(dateTimeString);
+
+            //Get host ID from player's current location
+            string hostID = await Utils.GetHostID(context, gameApiClient, _logger, latitude, longitude);
+
+
+            //Return if the player is not in the host location
+            if (string.IsNullOrEmpty(hostID))
+            {
+                joinRaceResponse.Message = "Player is not in Host Location";
+                return JsonConvert.SerializeObject(joinRaceResponse);
+            }
+
+            //If the playerId and hostID are not empty, then proceed with the checkin process
+            if (!string.IsNullOrEmpty(context.PlayerId) && !string.IsNullOrEmpty(hostID))
+            {
                 var getRaceScheduleData = await Utils.GetCustomDataWithKey<RaceScheduleData>(context, gameApiClient, hostID, "RaceSchedule");
 
                 if (string.IsNullOrEmpty(getRaceScheduleData.ScheduleStart))
@@ -49,13 +79,26 @@ namespace HorseRaceCloudCode
                 }
 
                 //Get Upcoming Race Data
-                DateTime getRaceTime = GetUpcomingRaceData(getRaceScheduleData);
+                DateTime getRaceTime = GetUpcomingRaceData(getRaceScheduleData, currentDateTime);
                 TimeSpan timeUntilNextRace = getRaceTime - currentDateTime;
 
                 //Set JoinRace Response
-                joinRaceResponse.RaceTime = getRaceTime.ToString();
+                joinRaceResponse.RaceTime = getRaceTime;
                 joinRaceResponse.CanWaitInLobby = timeUntilNextRace.TotalSeconds <= (getRaceScheduleData.PreRaceWaitTime * 60);
-                joinRaceResponse.Message = "Player is in Host Location";
+                if (joinRaceResponse.CanWaitInLobby)
+                {
+                    joinRaceResponse.Message = "Player can wait in Lobby";
+                }
+                else
+                {
+                    int totalSeconds = (int)timeUntilNextRace.TotalSeconds;
+                    int minutes = totalSeconds / 60;
+                    int seconds = totalSeconds % 60;
+
+                    timeUntilNextRace = timeUntilNextRace + new TimeSpan(0, -getRaceScheduleData.PreRaceWaitTime, 0);
+
+                    joinRaceResponse.Message = $"Player can join the lobby after {timeUntilNextRace.Hours.ToString("D2")}:{timeUntilNextRace.Minutes.ToString("D2")}:{timeUntilNextRace.Seconds.ToString("D2")}";
+                }
                 return JsonConvert.SerializeObject(joinRaceResponse);
             }
             else
@@ -65,7 +108,7 @@ namespace HorseRaceCloudCode
             }
         }
 
-        private DateTime GetUpcomingRaceData(RaceScheduleData raceScheduleData,DateTime currentDateTime)
+        private DateTime GetUpcomingRaceData(RaceScheduleData raceScheduleData, DateTime currentDateTime)
         {
             if (raceScheduleData != null)
             {
@@ -83,7 +126,7 @@ namespace HorseRaceCloudCode
             return currentDateTime;
         }
 
-        public DateTime GetNextRaceStartTime(DateTime currentTime, DateTime raceStartTime, DateTime raceEndTime, int intervalMinutes)
+        private DateTime GetNextRaceStartTime(DateTime currentTime, DateTime raceStartTime, DateTime raceEndTime, int intervalMinutes)
         {
             // Check if the current time is after the race day ends
             if (currentTime > raceEndTime)
@@ -115,14 +158,9 @@ namespace HorseRaceCloudCode
         }
 
         [CloudCodeFunction("ConfirmRaceCheckIn")]
-        public async Task<string> ConfirmRaceCheckIn(IExecutionContext context, string playerID)
+        public async Task<string> ConfirmRaceCheckIn(IExecutionContext context, double latitude, double longitude)
         {
-            CheckInRequest playerData = new CheckInRequest();
-            playerData.PlayerID = context.PlayerId;
-            playerData.Latitude = 17.48477376610915;
-            playerData.Longitude = 78.41440387735862;
-
-            string hostID = await Utils.GetHostID(context, gameApiClient, _logger, playerData.Latitude, playerData.Longitude);
+            string hostID = await Utils.GetHostID(context, gameApiClient, _logger, latitude, longitude);
 
             //Return if the player is not in the host location
             if (string.IsNullOrEmpty(hostID))
@@ -133,15 +171,15 @@ namespace HorseRaceCloudCode
             List<string>? raceCheckInPlayers = await Utils.GetCustomDataWithKey<List<string>>(context, gameApiClient, hostID, "RaceCheckIn");
 
             //Check if the player is already checked in
-            if (raceCheckInPlayers.Contains(playerID))
+            if (raceCheckInPlayers.Contains(context.PlayerId))
             {
                 return "Player Already Checked In";
             }
 
             //If player is not checked in, then add the player to the list
-            if (!raceCheckInPlayers.Contains(playerID))
+            if (!raceCheckInPlayers.Contains(context.PlayerId))
             {
-                raceCheckInPlayers?.Add(playerID);
+                raceCheckInPlayers?.Add(context.PlayerId);
 
                 await gameApiClient.CloudSaveData.SetCustomItemAsync(context, context.ServiceToken, context.ProjectId,
                              hostID, new SetItemBody("RaceCheckIn", JsonConvert.SerializeObject(raceCheckInPlayers)));

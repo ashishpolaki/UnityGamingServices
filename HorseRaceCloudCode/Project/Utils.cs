@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading.Tasks;
 using Unity.Services.CloudCode.Apis;
 using Unity.Services.CloudCode.Core;
@@ -10,6 +11,20 @@ namespace HorseRaceCloudCode
 {
     public class Utils
     {
+        //The method will parse the string into a datetime format
+        public static DateTime ParseDateTime(string dateTimeString)
+        {
+            DateTime dateTime = DateTime.UtcNow;
+            if (!string.IsNullOrEmpty(dateTimeString))
+            {
+                if(!DateTime.TryParseExact(dateTimeString, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out dateTime))
+                {
+                    return dateTime;
+                }
+            }
+            return dateTime;
+        }
+
         public static float CalculateHaversineDistance(double lat1, double lon1, double lat2, double lon2)
         {
             double EarthRadiusKm = 6371;

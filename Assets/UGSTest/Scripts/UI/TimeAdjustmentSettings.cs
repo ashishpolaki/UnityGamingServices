@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -72,5 +73,11 @@ public class TimeAdjustmentSettings : MonoBehaviour
     {
         return $"{hourText.text}:{minutesText.text} {meridiemText.text}";
     }
-
+    public void SetTime(DateTime dateTime)
+    {
+        //Set the current time to the text fields
+        hourText.text = dateTime.ToString("hh");
+        minutesText.text = dateTime.ToString("mm");
+        IsAM = dateTime.ToString("tt").Equals("AM", StringComparison.OrdinalIgnoreCase);
+    }
 }

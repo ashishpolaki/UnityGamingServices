@@ -21,18 +21,21 @@ namespace HorseRaceCloudCode
             this._logger = logger;
         }
 
+
         [CloudCodeFunction("CheckedInVenue")]
-        public async Task<string> CheckInVenue(IExecutionContext context, double latitude, double longitude)
+        public async Task<string> CheckInVenue(IExecutionContext context, double latitude, double longitude,string dateTimeString)
         {
             //Get host ID from player's current location
             string hostID = await Utils.GetHostID(context, gameApiClient, _logger, latitude, longitude);
+
+            DateTime dateTime = Utils.ParseDateTime(dateTimeString);
 
             //If the playerId and hostID are not empty, then proceed with the checkin process
             if (!string.IsNullOrEmpty(context.PlayerId) && !string.IsNullOrEmpty(hostID))
             {
                 //The Player is in host location, then request checkin 
                 await AddPlayerIntoHost(context, hostID);
-                string checkInMessage = await RequestCheckIn(context, hostID,DateTime.Now);
+                string checkInMessage = await RequestCheckIn(context, hostID, dateTime);
                 return checkInMessage;
             }
             return "Not in Venue Location";

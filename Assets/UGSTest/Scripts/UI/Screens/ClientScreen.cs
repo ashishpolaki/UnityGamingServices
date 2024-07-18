@@ -1,5 +1,7 @@
 using Newtonsoft.Json;
 using System;
+using System.Collections;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -27,8 +29,11 @@ namespace UI.Screen
         {
             checkedInBtn.onClick.RemoveAllListeners();
             joinRaceBtn.onClick.RemoveAllListeners();
-            GameManager.Instance.CloudCode.OnRaceStarted -= OnRaceStart;
-            GameManager.Instance.CloudCode.OnRaceResult -= OnRaceResult;
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.CloudCode.OnRaceStarted -= OnRaceStart;
+                GameManager.Instance.CloudCode.OnRaceResult -= OnRaceResult;
+            }
         }
         private void Start()
         {
@@ -53,46 +58,71 @@ namespace UI.Screen
                 currentLocationLatitude = GameManager.Instance.GPS.CurrentLocationLatitude;
                 currentLocationLongitude = GameManager.Instance.GPS.CurrentLocationLongitude;
             }
-            currentLocationLatitude = 17.48477376610915;
-            currentLocationLongitude = 78.41440387735862;
+            //currentLocationLatitude = 17.48477376610915;
+            //currentLocationLongitude = 78.41440387735862;
         }
         private async void CheckIn()
         {
+            string dateTime = string.Empty;
+            messageText.text = string.Empty;
+
             if (CheatCode.Instance.IsCheatEnabled)
             {
-                messageText.text = await CheatCode.Instance.CheckIn();
-                return;
+                dateTime = CheatCode.Instance.CheatDateTime;
+                currentLocationLatitude = CheatCode.Instance.Latitude;
+                currentLocationLongitude = CheatCode.Instance.Longitude;
             }
-
-            var result = await GameManager.Instance.CloudCode.CheckIn(currentLocationLatitude,currentLocationLongitude);
+            var result = await GameManager.Instance.CloudCode.CheckIn(currentLocationLatitude, currentLocationLongitude, dateTime);
             messageText.text = result;
         }
 
         private async void JoinRace()
         {
+            string dateTime = string.Empty;
             if (CheatCode.Instance.IsCheatEnabled)
             {
-                await CheatCode.Instance.JoinRaceRequest();
+                dateTime = CheatCode.Instance.CheatDateTime;
+                currentLocationLatitude = CheatCode.Instance.Latitude;
+                currentLocationLongitude = CheatCode.Instance.Longitude;
+            }
+            bool isJoinedRace = await RaceJoinAsync(dateTime);
+            if (isJoinedRace)
+            {
                 return;
             }
-            string responseData = await GameManager.Instance.CloudCode.JoinRace(currentLocationLatitude, currentLocationLongitude);
+            await RequestRaceJoinAsync(dateTime);
+        }
+        private async Task<bool> RaceJoinAsync(string dateTime)
+        {
+            int responseData = await GameManager.Instance.CloudCode.RaceJoin(currentLocationLatitude, currentLocationLongitude, dateTime);
+            if (responseData != 0)
+            {
+                OpenTab(ScreenTabType.RaceInProgress);
+                GameManager.Instance.GameData.SetHorseNumber(responseData);
+                return true;
+            }
+            return false;
+        }
 
+        private async Task RequestRaceJoinAsync(string dateTime)
+        {
+            string responseData = await GameManager.Instance.CloudCode.RequestRaceJoin(currentLocationLatitude, currentLocationLongitude, dateTime);
             if (!string.IsNullOrEmpty(responseData))
             {
                 UGS.CloudCode.JoinRaceResponse joinRaceResponse = JsonConvert.DeserializeObject<UGS.CloudCode.JoinRaceResponse>(responseData);
-                DateTime setCurrentDateTime = CheatCode.Instance.IsCheatEnabled ? DateTime.UtcNow : DateTime.UtcNow;
-                DateTime raceTime = DateTime.ParseExact(joinRaceResponse.RaceTime, "MM/dd/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+                //DateTime raceTime = DateTime.ParseExact(joinRaceResponse.RaceTime, "dd/MM/yyyy HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None);
+                DateTime raceTime = DateTime.Parse(joinRaceResponse.RaceTime);
 
-                GameManager.Instance.GameData.SetGameData(joinRaceResponse.CanWaitInLobby, raceTime, setCurrentDateTime);
+                GameManager.Instance.GameData.SetGameData(joinRaceResponse.CanWaitInLobby, raceTime);
                 if (joinRaceResponse.CanWaitInLobby)
                 {
                     // Show the lobby screen
+                    OpenTab(ScreenTabType.LobbyWait);
                 }
                 else
                 {
-                    messageText.text = joinRaceResponse.RaceTime;
+                    messageText.text = joinRaceResponse.Message;
                 }
-                OpenTab(ScreenTabType.LobbyWait);
             }
             else
             {
