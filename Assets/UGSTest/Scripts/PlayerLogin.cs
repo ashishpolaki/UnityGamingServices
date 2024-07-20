@@ -1,4 +1,3 @@
-using UI.Screen;
 using UnityEngine;
 
 public class PlayerLogin : MonoBehaviour
@@ -24,10 +23,13 @@ public class PlayerLogin : MonoBehaviour
 
     void Start()
     {
-        UI.UIController.Instance.ScreenEvent(openScreenType, UIScreenEvent.Open);
         if (GameManager.Instance.Authentication.IsSignInCached())
         {
             GameManager.Instance.Authentication.CacheSignInAsync();
+        }
+        else
+        {
+            UI.UIController.Instance.ScreenEvent(openScreenType, UIScreenEvent.Open);
         }
         GameManager.Instance.GPS.RequestPermission();
     }

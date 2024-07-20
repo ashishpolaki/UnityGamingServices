@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: UIScreenConfig
   m_EditorClassIdentifier: 
   screens:
-  - {fileID: 372432558995484459, guid: 579334059efcaab43b1ccc3800e46f31, type: 3}
-  - {fileID: 4714885413628585181, guid: 1b3eb42834a643f4e9c2df4a3398a453, type: 3}
+  - {fileID: 3249648341629697967, guid: 579334059efcaab43b1ccc3800e46f31, type: 3}
+  - {fileID: 6728266054668300391, guid: 1b3eb42834a643f4e9c2df4a3398a453, type: 3}
   - {fileID: 2861682017982563202, guid: 1c27cb5d5f1c77b41a4108c42d3ad29b, type: 3}
   - {fileID: 3896713645350449626, guid: 95e4f2534dbcda04bb3791613f5f6629, type: 3}

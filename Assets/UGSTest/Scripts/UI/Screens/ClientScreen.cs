@@ -1,6 +1,5 @@
 using Newtonsoft.Json;
 using System;
-using System.Collections;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -12,6 +11,7 @@ namespace UI.Screen
     {
         [SerializeField] private Button checkedInBtn;
         [SerializeField] private Button joinRaceBtn;
+        [SerializeField] private Button backButton;
         [SerializeField] private TextMeshProUGUI messageText;
 
         [SerializeField] private double currentLocationLatitude;
@@ -21,6 +21,7 @@ namespace UI.Screen
         {
             checkedInBtn.onClick.AddListener(() => CheckIn());
             joinRaceBtn.onClick.AddListener(() => JoinRace());
+            backButton.onClick.AddListener(() => OnScreenBack());
             GameManager.Instance.CloudCode.OnRaceStarted += OnRaceStart;
             GameManager.Instance.CloudCode.OnRaceResult += OnRaceResult;
         }
@@ -29,6 +30,7 @@ namespace UI.Screen
         {
             checkedInBtn.onClick.RemoveAllListeners();
             joinRaceBtn.onClick.RemoveAllListeners();
+            backButton.onClick.RemoveAllListeners();
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.CloudCode.OnRaceStarted -= OnRaceStart;
@@ -38,6 +40,16 @@ namespace UI.Screen
         private void Start()
         {
             FetchCurrentLocation();
+        }
+
+        public override void OnScreenBack()
+        {
+            base.OnScreenBack();
+            if(!CantGoBack)
+            {
+                UIController.Instance.ScreenEvent(this.ScreenType,UIScreenEvent.Close);
+                UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Show);
+            }
         }
 
         private void OnRaceStart(string message)
@@ -58,8 +70,6 @@ namespace UI.Screen
                 currentLocationLatitude = GameManager.Instance.GPS.CurrentLocationLatitude;
                 currentLocationLongitude = GameManager.Instance.GPS.CurrentLocationLongitude;
             }
-            //currentLocationLatitude = 17.48477376610915;
-            //currentLocationLongitude = 78.41440387735862;
         }
         private async void CheckIn()
         {

@@ -190,6 +190,7 @@ namespace UGS
         public void Signout()
         {
             AuthenticationService.Instance.SignOut(true);
+            AuthenticationService.Instance.ClearSessionToken();
         }
 
         #region Subscribe/Desubscribe Methods

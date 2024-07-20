@@ -14,15 +14,12 @@ namespace UI.Screen.Tab
         {
             hostBtn.onClick.AddListener(() => HostGame());
             joinBtn.onClick.AddListener(() => JoinGame());
+            SetPlayerName();
         }
         private void OnDisable()
         {
             hostBtn.onClick.RemoveAllListeners();
             joinBtn.onClick.RemoveAllListeners();
-        }
-        private void Start()
-        {
-            SetPlayerName();
         }
         private void SetPlayerName()
         {
@@ -30,12 +27,12 @@ namespace UI.Screen.Tab
         }
         private void JoinGame()
         {
-            UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Close);
+            UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Hide);
             UIController.Instance.ScreenEvent(ScreenType.Client, UIScreenEvent.Open);
         }
         private void HostGame()
         {
-            UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Close);
+            UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Hide);
             UIController.Instance.ScreenEvent(ScreenType.Host, UIScreenEvent.Open);
         }
     }

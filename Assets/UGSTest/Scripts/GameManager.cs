@@ -82,6 +82,7 @@ public class GameManager : MonoBehaviour
         CloudCode = new CloudCode();
     }
     #endregion
+
     private void LoginSuccessful()
     {
         CloudCode.SubscribeToPlayerMessages();

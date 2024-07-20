@@ -15,6 +15,7 @@ namespace UI.Screen
             {
                 GameManager.Instance.Authentication.OnSignedOut += OnSignedOutEvent;
             }
+            Enable();
         }
         private void OnDisable()
         {
@@ -24,7 +25,7 @@ namespace UI.Screen
                 GameManager.Instance.Authentication.OnSignedOut -= OnSignedOutEvent;
             }
         }
-        private void Start()
+        private void Enable()
         {
             //If player name is empty then open player name tab
             if (string.IsNullOrEmpty(GameManager.Instance.PlayerData.PlayerName))
@@ -43,9 +44,9 @@ namespace UI.Screen
         }
         private void OnSignedOutEvent()
         {
+            GameManager.Instance.ResetData();
             UIController.Instance.ScreenEvent(ScreenType.Login, UIScreenEvent.Open);
             UIController.Instance.ScreenEvent(this.ScreenType, UIScreenEvent.Close);
-            GameManager.Instance.ResetData();
         }
     }
 }

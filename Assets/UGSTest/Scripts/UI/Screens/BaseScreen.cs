@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UI.Screen.Tab;
@@ -14,6 +13,11 @@ namespace UI.Screen
         public ScreenType ScreenType => screenType;
         public List<BaseTab> Tabs { get => tabs; }
         public ScreenTabType DefaultOpenTab { get => defaultOpenTab; }
+
+        public bool IsScreenOpen { get => gameObject.activeSelf; }
+        public bool CantGoBack { get => cantGoBack; private set => cantGoBack = value; }
+
+        private  bool cantGoBack;
 
         public virtual void Open(ScreenTabType screenTabType)
         {
@@ -34,7 +38,6 @@ namespace UI.Screen
         }
         public virtual void Close()
         {
-            gameObject.SetActive(false);
             foreach (var tab in Tabs)
             {
                 if (tab.IsOpen)
@@ -42,6 +45,7 @@ namespace UI.Screen
                     tab.Close();
                 }
             }
+            gameObject.SetActive(false);
         }
         public virtual void Show(ScreenTabType screenTabType)
         {
@@ -85,12 +89,30 @@ namespace UI.Screen
                 Tabs[i].Close();
             }
         }
+
+        public virtual void OnScreenBack()
+        {
+            //Close the tab that is open and then return.
+            foreach (var tab in Tabs)
+            {
+                if (tab.IsOpen)
+                {
+                    tab.Close();
+                    CantGoBack = true;
+                    return;
+                }
+            }
+            CantGoBack = false;
+        }
     }
     public interface IScreen
     {
-        public ScreenType ScreenType { get; }
         public List<BaseTab> Tabs { get; }
+        public ScreenType ScreenType { get; }
         public ScreenTabType DefaultOpenTab { get; }
+        public bool IsScreenOpen { get; }
+        public bool CantGoBack { get; }
+        public void OnScreenBack();
         public void Open(ScreenTabType screenTabType);
         public void Close();
         public void Show(ScreenTabType screenTabType);

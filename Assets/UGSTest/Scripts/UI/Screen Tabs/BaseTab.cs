@@ -7,17 +7,15 @@ namespace UI.Screen.Tab
         [SerializeField] private ScreenTabType screenTabType;
 
         public ScreenTabType ScreenTabType => screenTabType;
-        public bool IsOpen { get; private set; }
+        public bool IsOpen { get => gameObject.activeSelf; }
 
         public virtual void Close()
         {
             gameObject.SetActive(false);
-            IsOpen = false;
         }
         public virtual void Open()
         {
             gameObject.SetActive(true);
-            IsOpen = true;
         }
     }
     public interface IScreenTab
