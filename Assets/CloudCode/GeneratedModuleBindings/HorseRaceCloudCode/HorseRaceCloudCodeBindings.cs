@@ -23,37 +23,32 @@ namespace Unity.Services.CloudCode.GeneratedBindings
             await k_Service.CallModuleEndpointAsync("HorseRaceCloudCode", "RaceScheduleTimings",
                new Dictionary<string, object>() { { "raceData", _raceData } });
         }
-        public async Task<string> VenueCheckIn(double latitude, double longitude,string dateTime)
+        public async Task<string> VenueCheckIn(string hostID, string dateTime)
         {
             return await k_Service.CallModuleEndpointAsync("HorseRaceCloudCode", "CheckedInVenue",
-                 new Dictionary<string, object>() { { "latitude", latitude }, { "longitude", longitude },{ "dateTimeString", dateTime } });
+                 new Dictionary<string, object>() { { "hostId", hostID }, { "dateTimeString", dateTime } });
         }
 
-        public async Task<int> JoinRace(double latitude, double longitude, string dateTime)
+        public async Task<int> JoinRace(string hostID, string dateTime)
         {
             return await k_Service.CallModuleEndpointAsync<int>("HorseRaceCloudCode", "RaceJoin",
-                                 new Dictionary<string, object>() { { "latitude", latitude }, { "longitude", longitude }, { "dateTimeString", dateTime } });
+                                 new Dictionary<string, object>() { { "hostID", hostID }, { "dateTimeString", dateTime } });
         }
-        public async Task<string> RequestRaceJoin(double latitude, double longitude, string dateTime)
+        public async Task<string> RequestRaceJoin(string hostID, string dateTime)
         {
             return await k_Service.CallModuleEndpointAsync<string>("HorseRaceCloudCode", "RaceJoinRequest",
-                                 new Dictionary<string, object>() { { "latitude", latitude }, { "longitude", longitude }, { "dateTimeString", dateTime } });
+                                 new Dictionary<string, object>() { { "hostID", hostID }, { "dateTimeString", dateTime } });
         }
 
-        public async Task<string> ConfirmRaceCheckIn(double latitude, double longitude)
+        public async Task<bool> ConfirmRaceCheckIn(string hostID, string playerName)
         {
-            return await k_Service.CallModuleEndpointAsync("HorseRaceCloudCode", "ConfirmRaceCheckIn",
-                                 new Dictionary<string, object>() { { "latitude", latitude }, { "longitude", longitude } });
+            return await k_Service.CallModuleEndpointAsync<bool>("HorseRaceCloudCode", "ConfirmRaceCheckIn",
+                                 new Dictionary<string, object>() { { "hostID", hostID }, { "playerName", playerName } });
         }
-
-        public async Task<string> GetLobbyPlayers()
+        public async Task<bool> StartRace(string lobbyData)
         {
-            return await k_Service.CallModuleEndpointAsync("HorseRaceCloudCode", "GetRaceCheckInPlayers");
-        }
-        public async Task StartRace(string horsesInRaceOrder)
-        {
-            await k_Service.CallModuleEndpointAsync("HorseRaceCloudCode", "StartRace",
-                 new Dictionary<string, object>() { { "horsesInRaceOrder", horsesInRaceOrder } });
+            return await k_Service.CallModuleEndpointAsync<bool>("HorseRaceCloudCode", "StartRace",
+                   new Dictionary<string, object>() { { "lobbyData", lobbyData } });
         }
         public async Task SendRaceResults(int raceWinnerHorse)
         {

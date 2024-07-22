@@ -226,7 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c28062b9463c3d740a70dc7745aaba51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  screenTabType: 9
+  screenTabType: 8
   horseNumberTxt: {fileID: 7384403069252168312}
 --- !u!1 &8271533824295421271
 GameObject:

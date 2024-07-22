@@ -148,7 +148,7 @@ GameObject:
   - component: {fileID: 2707607150050201347}
   - component: {fileID: 3406263993833826774}
   m_Layer: 5
-  m_Name: LobbyWaitTab
+  m_Name: PlayerLobby
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

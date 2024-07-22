@@ -11,6 +11,7 @@ namespace UI
         [SerializeField] private UIScreenManager screenManager;
         #endregion
 
+        #region Unity Methods
         private void Awake()
         {
             if (Instance == null)
@@ -19,12 +20,14 @@ namespace UI
             }
             screenManager.Initialize();
         }
-
+        #endregion
+        
+        #region Public Methods
         public void ScreenEvent(ScreenType screenType, UIScreenEvent uIScreenEvent, ScreenTabType screenTabType = ScreenTabType.None)
         {
-            /*currentActiveScreen =*/
             screenManager.ScreenEvent(screenType, uIScreenEvent,screenTabType);
         }
+        #endregion
     }
 }
 public enum UIScreenEvent

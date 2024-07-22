@@ -65,7 +65,7 @@ public class DateSelectorUI : MonoBehaviour
     }
     public void SetDate(DateTime dateTime)
     {
-        //Set the current date to the text fields
+        //Set the currentRaceCheckins date to the text fields
         dayText.text = dateTime.Day.ToString("D2");
         monthText.text = dateTime.Month.ToString("D2");
         yearText.text = dateTime.Year.ToString("D4");

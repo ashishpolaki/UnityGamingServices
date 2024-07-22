@@ -1,41 +1,51 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UI.Screen.Tab
 {
-    public class LobbyWaitTab : BaseTab
+    public class PlayerLobbyTab : BaseTab
     {
         [SerializeField] private TextMeshProUGUI raceStartTimeTxt;
         [SerializeField] private Button raceCheckInBtn;
 
         private TimeSpan timeLeft = new TimeSpan();
-        private double currentLocationLatitude;
-        private double currentLocationLongitude;
-
+        private Coroutine coroutine;
         private void OnEnable()
         {
             raceCheckInBtn.onClick.AddListener(() => RaceConfirmCheckIn());
+            PlayerLobbyStatus();
         }
         private void OnDisable()
         {
             raceCheckInBtn.onClick.RemoveAllListeners();
         }
-
-
-        private void Start()
+        private async void PlayerLobbyStatus()
         {
-            currentLocationLatitude = GameManager.Instance.GPS.CurrentLocationLatitude;
-            currentLocationLongitude = GameManager.Instance.GPS.CurrentLocationLongitude;
-
             if (CheatCode.Instance.IsCheatEnabled)
             {
                 DateTime currentDateTime = DateTime.UtcNow.Add(DateTime.Parse(CheatCode.Instance.CheatDateTime) - DateTime.UtcNow);
                 timeLeft = GameManager.Instance.GameData.RaceTime - currentDateTime;
             }
-            StartCoroutine(StartCountDownTimeLeft());
+            else
+            {
+                DateTime currentDateTime = DateTime.Now;
+                timeLeft = GameManager.Instance.GameData.RaceTime - currentDateTime;
+            }
+            if (coroutine != null)
+            {
+                StopCoroutine(coroutine);
+            }
+            coroutine = StartCoroutine(StartCountDownTimeLeft());
+
+            bool isCheckedInAlready = await GameManager.Instance.IsPlayerAlreadyCheckIn();
+            if (isCheckedInAlready)
+            {
+                raceCheckInBtn.interactable = false;
+            }
         }
 
         IEnumerator StartCountDownTimeLeft()
@@ -53,13 +63,12 @@ namespace UI.Screen.Tab
 
         private async void RaceConfirmCheckIn()
         {
-            if (CheatCode.Instance.IsCheatEnabled)
+            Func<Task<bool>> confirmCheckinResponse = () => GameManager.Instance.CloudCode.ConfirmRaceCheckIn(GameManager.Instance.GameData.HostID, GameManager.Instance.GameData.PlayerName);
+            bool isCheckedIn = await LoadingScreen.Instance.PerformAsyncWithLoading(confirmCheckinResponse);
+            if (isCheckedIn)
             {
-                currentLocationLatitude = CheatCode.Instance.Latitude;
-                currentLocationLongitude = CheatCode.Instance.Longitude;
+                raceCheckInBtn.interactable = false;
             }
-            string message = await GameManager.Instance.CloudCode.ConfirmRaceCheckIn(currentLocationLatitude, currentLocationLongitude);
-            Debug.Log(message);
         }
     }
 }

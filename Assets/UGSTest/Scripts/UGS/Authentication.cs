@@ -99,7 +99,7 @@ namespace UGS
             return false;
         }
 
-        public async void SignUpAsync(string userName, string password)
+        public async Task SignUpAsync(string userName, string password)
         {
             try
             {
@@ -119,7 +119,7 @@ namespace UGS
             }
         }
 
-        public async void SignInWithUsernamePasswordAsync(string username, string password)
+        public async Task SignInWithUsernamePasswordAsync(string username, string password)
         {
             try
             {
@@ -139,7 +139,7 @@ namespace UGS
             }
         }
 
-        public async void SignInAnonymouslyAsync()
+        public async Task SignInAnonymouslyAsync()
         {
             //if session token is available, sign out the player
             if (IsSignInCached())
@@ -166,7 +166,7 @@ namespace UGS
             }
         }
 
-        public async void CacheSignInAsync()
+        public async Task CacheSignInAsync()
         {
             //Random signin for anonymous user with random username
             try

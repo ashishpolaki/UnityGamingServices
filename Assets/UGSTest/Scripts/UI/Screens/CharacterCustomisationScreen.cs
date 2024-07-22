@@ -1,4 +1,3 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +7,7 @@ namespace UI.Screen
     {
         [SerializeField] private Button signOutBtn;
 
+        #region Unity Methods
         private void OnEnable()
         {
             signOutBtn.onClick.AddListener(() => SignOut());
@@ -25,10 +25,13 @@ namespace UI.Screen
                 GameManager.Instance.Authentication.OnSignedOut -= OnSignedOutEvent;
             }
         }
+        #endregion
+
+        #region Private Methods
         private void Enable()
         {
             //If player name is empty then open player name tab
-            if (string.IsNullOrEmpty(GameManager.Instance.PlayerData.PlayerName))
+            if (string.IsNullOrEmpty(GameManager.Instance.GameData.PlayerName))
             {
                 OpenTab(ScreenTabType.PlayerName);
             }
@@ -46,7 +49,8 @@ namespace UI.Screen
         {
             GameManager.Instance.ResetData();
             UIController.Instance.ScreenEvent(ScreenType.Login, UIScreenEvent.Open);
-            UIController.Instance.ScreenEvent(this.ScreenType, UIScreenEvent.Close);
+            Close();
         }
+        #endregion
     }
 }

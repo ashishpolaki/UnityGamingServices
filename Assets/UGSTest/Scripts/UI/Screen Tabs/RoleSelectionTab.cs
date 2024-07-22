@@ -6,10 +6,13 @@ namespace UI.Screen.Tab
 {
     public class RoleSelectionTab : BaseTab
     {
+        #region Inspector variables
         [SerializeField] private Button hostBtn;
         [SerializeField] private Button joinBtn;
         [SerializeField] private TextMeshProUGUI playerNameTxt;
+        #endregion
 
+        #region Unity methods
         private void OnEnable()
         {
             hostBtn.onClick.AddListener(() => HostGame());
@@ -21,9 +24,12 @@ namespace UI.Screen.Tab
             hostBtn.onClick.RemoveAllListeners();
             joinBtn.onClick.RemoveAllListeners();
         }
+        #endregion
+
+        #region Private Methods
         private void SetPlayerName()
         {
-            playerNameTxt.text = "Player Name : " + GameManager.Instance.PlayerData.PlayerName;
+            playerNameTxt.text = "Player Name : " + GameManager.Instance.GameData.PlayerName;
         }
         private void JoinGame()
         {
@@ -35,5 +41,6 @@ namespace UI.Screen.Tab
             UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Hide);
             UIController.Instance.ScreenEvent(ScreenType.Host, UIScreenEvent.Open);
         }
+        #endregion
     }
 }

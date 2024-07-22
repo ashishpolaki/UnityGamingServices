@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 
 namespace HorseRaceCloudCode
 {
@@ -43,7 +42,7 @@ namespace HorseRaceCloudCode
     }
     public class JoinRaceResponse
     {
-        public bool CanWaitInLobby { get; set; } 
+        public bool CanWaitInLobby { get; set; }
         public DateTime RaceTime { get; set; }
         public string Message { get; set; }
 
@@ -53,14 +52,28 @@ namespace HorseRaceCloudCode
             Message = string.Empty;
         }
     }
-    public class RaceLobbyData
+    public class RaceLobbyParticipant
     {
         public string PlayerID { get; set; }
         public int HorseNumber { get; set; }
+        public string PlayerName { get; set; }
 
-        public RaceLobbyData()
+        public RaceLobbyParticipant()
         {
             PlayerID = string.Empty;
+            PlayerName = string.Empty;
+        }
+    }
+    public class CurrentRacePlayerCheckIn
+    {
+        public string PlayerID { get; set; }
+        public string PlayerName { get; set; }
+        public int CurrentDayCheckIns { get; set; }
+
+        public CurrentRacePlayerCheckIn()
+        {
+            PlayerID = string.Empty;
+            PlayerName = string.Empty;
         }
     }
 }

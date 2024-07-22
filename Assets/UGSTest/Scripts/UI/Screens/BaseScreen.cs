@@ -16,6 +16,7 @@ namespace UI.Screen
 
         public bool IsScreenOpen { get => gameObject.activeSelf; }
         public bool CantGoBack { get => cantGoBack; private set => cantGoBack = value; }
+        public bool IsAnyTabOpened { get => tabs.Exists(tab => tab.IsOpen); }
 
         private  bool cantGoBack;
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Google.Protobuf;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -21,91 +22,44 @@ namespace HorseRaceCloudCode
             this._logger = logger;
         }
 
-        [CloudCodeFunction("RaceJoin")]
-        public async Task<int> RaceJoin(IExecutionContext context, double latitude, double longitude, string dateTimeString)
-        {
-            int horseNumber = 0;
-
-            //Get host ID from player's current location
-            string hostID = await Utils.GetHostID(context, gameApiClient, _logger, latitude, longitude);
-
-            //If the playerId and hostID are not empty, then proceed with the checkin process
-            if (!string.IsNullOrEmpty(context.PlayerId) && !string.IsNullOrEmpty(hostID))
-            {
-
-                List<RaceLobbyData> raceLobbyData = await Utils.GetCustomDataWithKey<List<RaceLobbyData>>(context, gameApiClient, hostID, "RaceLobby");
-
-                if (raceLobbyData.Count > 0)
-                {
-                    foreach (var playerRaceLobbyData in raceLobbyData)
-                    {
-                        if (playerRaceLobbyData.PlayerID == context.PlayerId)
-                        {
-                            horseNumber = playerRaceLobbyData.HorseNumber;
-                        }
-                    }
-                }
-            }
-
-            return horseNumber;
-        }
-
         [CloudCodeFunction("RaceJoinRequest")]
-        public async Task<string> RaceJoinRequest(IExecutionContext context, double latitude, double longitude, string dateTimeString)
+        public async Task<string> RaceJoinRequest(IExecutionContext context, string hostID, string dateTimeString)
         {
             JoinRaceResponse? joinRaceResponse = new JoinRaceResponse();
             DateTime currentDateTime = Utils.ParseDateTime(dateTimeString);
 
-            //Get host ID from player's current location
-            string hostID = await Utils.GetHostID(context, gameApiClient, _logger, latitude, longitude);
+            var getRaceScheduleData = await Utils.GetCustomDataWithKey<RaceScheduleData>(context, gameApiClient, hostID, "RaceSchedule");
 
-
-            //Return if the player is not in the host location
-            if (string.IsNullOrEmpty(hostID))
+            if (string.IsNullOrEmpty(getRaceScheduleData.ScheduleStart))
             {
-                joinRaceResponse.Message = "Player is not in Host Location";
+                joinRaceResponse.Message = "Player Not updated Race Schedule Time";
                 return JsonConvert.SerializeObject(joinRaceResponse);
             }
 
-            //If the playerId and hostID are not empty, then proceed with the checkin process
-            if (!string.IsNullOrEmpty(context.PlayerId) && !string.IsNullOrEmpty(hostID))
+            //Get Upcoming Race Data
+            _logger.LogDebug($"Get Upcoming {currentDateTime}");
+            DateTime getRaceTime = GetUpcomingRaceData(getRaceScheduleData, currentDateTime);
+            TimeSpan timeUntilNextRace = getRaceTime - currentDateTime;
+
+            //Set JoinRace Response
+            joinRaceResponse.RaceTime = getRaceTime;
+            joinRaceResponse.CanWaitInLobby = timeUntilNextRace.TotalSeconds <= (getRaceScheduleData.PreRaceWaitTime * 60);
+            if (joinRaceResponse.CanWaitInLobby)
             {
-                var getRaceScheduleData = await Utils.GetCustomDataWithKey<RaceScheduleData>(context, gameApiClient, hostID, "RaceSchedule");
-
-                if (string.IsNullOrEmpty(getRaceScheduleData.ScheduleStart))
-                {
-                    joinRaceResponse.Message = "Player Not updated Race Schedule Time";
-                    return JsonConvert.SerializeObject(joinRaceResponse);
-                }
-
-                //Get Upcoming Race Data
-                DateTime getRaceTime = GetUpcomingRaceData(getRaceScheduleData, currentDateTime);
-                TimeSpan timeUntilNextRace = getRaceTime - currentDateTime;
-
-                //Set JoinRace Response
-                joinRaceResponse.RaceTime = getRaceTime;
-                joinRaceResponse.CanWaitInLobby = timeUntilNextRace.TotalSeconds <= (getRaceScheduleData.PreRaceWaitTime * 60);
-                if (joinRaceResponse.CanWaitInLobby)
-                {
-                    joinRaceResponse.Message = "Player can wait in Lobby";
-                }
-                else
-                {
-                    int totalSeconds = (int)timeUntilNextRace.TotalSeconds;
-                    int minutes = totalSeconds / 60;
-                    int seconds = totalSeconds % 60;
-
-                    timeUntilNextRace = timeUntilNextRace + new TimeSpan(0, -getRaceScheduleData.PreRaceWaitTime, 0);
-
-                    joinRaceResponse.Message = $"Player can join the lobby after {timeUntilNextRace.Hours.ToString("D2")}:{timeUntilNextRace.Minutes.ToString("D2")}:{timeUntilNextRace.Seconds.ToString("D2")}";
-                }
-                return JsonConvert.SerializeObject(joinRaceResponse);
+                //player can wait in the lobby
             }
             else
             {
-                joinRaceResponse.Message = "Error in Player Data";
-                return JsonConvert.SerializeObject(joinRaceResponse);
+                //Show the time the player can join the lobby
+                int totalSeconds = (int)timeUntilNextRace.TotalSeconds;
+                int minutes = totalSeconds / 60;
+                int seconds = totalSeconds % 60;
+
+                timeUntilNextRace = timeUntilNextRace + new TimeSpan(0, -getRaceScheduleData.PreRaceWaitTime, 0);
+
+                joinRaceResponse.Message = $"Player can join the lobby after {timeUntilNextRace.Hours.ToString("D2")}:{timeUntilNextRace.Minutes.ToString("D2")}:{timeUntilNextRace.Seconds.ToString("D2")}";
             }
+            return JsonConvert.SerializeObject(joinRaceResponse);
         }
 
         private DateTime GetUpcomingRaceData(RaceScheduleData raceScheduleData, DateTime currentDateTime)
@@ -132,7 +86,6 @@ namespace HorseRaceCloudCode
             if (currentTime > raceEndTime)
             {
                 return raceStartTime.AddDays(1);
-                //  return "The race will start tomorrow.";
             }
             else
             {
@@ -140,51 +93,56 @@ namespace HorseRaceCloudCode
                 if (currentTime <= raceStartTime)
                 {
                     // If the current time is before the race starts, calculate the time until the race starts
-                    //  timeUntilNextRace = raceStartTime - currentTime;
                     return raceStartTime;
                 }
                 else
                 {
+                    // Calculate the time until this next race starts, including seconds
                     TimeSpan timeSinceRaceStart = currentTime - raceStartTime;
                     int totalSecondsSinceRaceStart = (int)timeSinceRaceStart.TotalSeconds;
                     int totalSecondsUntilNextRace = intervalMinutes * 60 - (totalSecondsSinceRaceStart % (intervalMinutes * 60));
                     DateTime nextRaceTime = currentTime.AddSeconds(totalSecondsUntilNextRace);
 
-                    // Calculate the time until this next race starts, including seconds
-                    // timeUntilNextRace = nextRaceTime - currentTime;
                     return nextRaceTime;
                 }
             }
         }
 
         [CloudCodeFunction("ConfirmRaceCheckIn")]
-        public async Task<string> ConfirmRaceCheckIn(IExecutionContext context, double latitude, double longitude)
+        public async Task<bool> ConfirmRaceCheckIn(IExecutionContext context, string hostID, string playerName)
         {
-            string hostID = await Utils.GetHostID(context, gameApiClient, _logger, latitude, longitude);
+            //Get the list of players who have checked in
+            List<CurrentRacePlayerCheckIn>? raceCheckInPlayers = await Utils.GetCustomDataWithKey<List<CurrentRacePlayerCheckIn>>(context, gameApiClient, hostID, "RaceCheckIn");
 
-            //Return if the player is not in the host location
-            if (string.IsNullOrEmpty(hostID))
+            //Get current day player checkins for the player
+            int currentDayCheckIns = 0;
+            DateTime currentDateTime = DateTime.UtcNow;
+            string key = $"{hostID}{currentDateTime.Year.ToString("YYYY")}{currentDateTime.Month.ToString("MM")}";
+
+            List<PlayerCheckIn>? playerCheckInsList = await Utils.GetProtectedDataWithKey<List<PlayerCheckIn>>(context, gameApiClient, context.PlayerId, key);
+
+            //If the list is greater than 0, then check if the current date is already in the list.
+            if (playerCheckInsList.Count > 0)
             {
-                return "Player is not in Host Location";
+                foreach (var currentCheckInItem in playerCheckInsList)
+                {
+                    //If the current date matches the date in the list, then update the checkin record.
+                    if (currentCheckInItem.Date == currentDateTime.Date.ToString("MM-dd"))
+                    {
+                        currentDayCheckIns = currentCheckInItem.Count;
+                        break;
+                    }
+                }
             }
 
-            List<string>? raceCheckInPlayers = await Utils.GetCustomDataWithKey<List<string>>(context, gameApiClient, hostID, "RaceCheckIn");
+            //Add the player to the list
+            raceCheckInPlayers.Add(new CurrentRacePlayerCheckIn() { PlayerID = context.PlayerId, PlayerName = playerName ,CurrentDayCheckIns = currentDayCheckIns } );
 
-            //Check if the player is already checked in
-            if (raceCheckInPlayers.Contains(context.PlayerId))
-            {
-                return "Player Already Checked In";
-            }
+            //Save the updated list
+            await gameApiClient.CloudSaveData.SetCustomItemAsync(context, context.ServiceToken, context.ProjectId,
+                         hostID, new SetItemBody("RaceCheckIn", JsonConvert.SerializeObject(raceCheckInPlayers)));
 
-            //If player is not checked in, then add the player to the list
-            if (!raceCheckInPlayers.Contains(context.PlayerId))
-            {
-                raceCheckInPlayers?.Add(context.PlayerId);
-
-                await gameApiClient.CloudSaveData.SetCustomItemAsync(context, context.ServiceToken, context.ProjectId,
-                             hostID, new SetItemBody("RaceCheckIn", JsonConvert.SerializeObject(raceCheckInPlayers)));
-            }
-            return "Player Checked In";
+            return true;
         }
     }
 }

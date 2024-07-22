@@ -5,12 +5,14 @@ namespace UI.Screen
 {
     public class HostScreen : BaseScreen
     {
+        #region Inspector Variables
         [SerializeField] private Button startRaceBtn;
         [SerializeField] private Button registerVenueBtn;
         [SerializeField] private Button scheduleRaceBtn;
         [SerializeField] private Button backButton;
+        #endregion
 
-        
+        #region Unity Methods
         private void OnEnable()
         {
             startRaceBtn.onClick.AddListener(() => StartRace());
@@ -25,25 +27,30 @@ namespace UI.Screen
             scheduleRaceBtn.onClick.RemoveAllListeners();
             backButton.onClick.RemoveAllListeners();
         }
+        #endregion
+
+        #region Private Methods
         private void RegisterVenue()
         {
            OpenTab(ScreenTabType.RegisterVenue);
         }
         private void StartRace()
         {
-            OpenTab(ScreenTabType.RaceLobby);
+            OpenTab(ScreenTabType.Lobby);
         }
         private void ScheduleRace()
         {
             OpenTab(ScreenTabType.RaceSchedule);
         }
+        #endregion
+
         public override void OnScreenBack()
         {
             base.OnScreenBack();
             if (!CantGoBack)
             {
-                UIController.Instance.ScreenEvent(this.ScreenType, UIScreenEvent.Close);
                 UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Show);
+                Close();
             }
         }
     }

@@ -103,18 +103,15 @@ public class TimeAdjustmentSettings : MonoBehaviour
         }
         return string.Empty;
     }
-
-
-
     public string ReturnTime()
     {
         return $"{hourText.text}:{minutesText.text} {meridiemText.text}";
     }
     public void SetTime(DateTime dateTime)
     {
-        //Set the current time to the text fields
-        hourText.text = dateTime.ToString("hh");
-        minutesText.text = dateTime.ToString("mm");
+        //Set the currentRaceCheckins time to the text fields
+        hourInput.text = dateTime.ToString("hh");
+        minutesInput.text = dateTime.ToString("mm");
         IsAM = dateTime.ToString("tt").Equals("AM", StringComparison.OrdinalIgnoreCase);
     }
 }

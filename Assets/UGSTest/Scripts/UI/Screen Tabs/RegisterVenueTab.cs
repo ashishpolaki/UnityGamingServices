@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -5,12 +7,15 @@ namespace UI.Screen.Tab
 {
     public class RegisterVenueTab : BaseTab
     {
+        #region Inspector Variables
         [SerializeField] private InputField locationLatitude;
         [SerializeField] private InputField locationLongitude;
         [SerializeField] private InputField radiusInput;
         [SerializeField] private Button registerVenueBtn;
         [SerializeField] private Button fetchCurrentLocationBtn;
+        #endregion
 
+        #region Unity Methods
         private void OnEnable()
         {
             registerVenueBtn.onClick.AddListener(() => RegisterVenue());
@@ -21,17 +26,19 @@ namespace UI.Screen.Tab
             registerVenueBtn.onClick.RemoveAllListeners();
             fetchCurrentLocationBtn.onClick.RemoveAllListeners();
         }
+        #endregion
 
+        #region Private Methods
         private async void FetchCurrentLocation()
         {
-            bool result = await GameManager.Instance.GPS.TryGetLocationAsync();
+            Func<Task<bool>> method = () => GameManager.Instance.GPS.TryGetLocationAsync();
+            bool result = await LoadingScreen.Instance.PerformAsyncWithLoading<bool>(method);
             if (result)
             {
                 locationLatitude.text = GameManager.Instance.GPS.CurrentLocationLatitude.ToString();
                 locationLongitude.text = GameManager.Instance.GPS.CurrentLocationLongitude.ToString();
             }
         }
-
         private async void RegisterVenue()
         {
             if (string.IsNullOrEmpty(locationLatitude.text) || string.IsNullOrEmpty(locationLongitude.text) || string.IsNullOrEmpty(radiusInput.text))
@@ -53,8 +60,9 @@ namespace UI.Screen.Tab
                 Radius = radius
             };
             await GameManager.Instance.CloudCode.RegisterVenue(registerHostItem);
-            gameObject.SetActive(false);
+            Close();
         }
+        #endregion
 
     }
 }

@@ -34,8 +34,7 @@ public enum ScreenTabType
     RaceSchedule,
     PlayerName,
     RoleSelection,
-    LobbyWait,
-    RaceLobby,
+    Lobby,
     RegisterVenue,
     RaceInProgress,
     RaceResults

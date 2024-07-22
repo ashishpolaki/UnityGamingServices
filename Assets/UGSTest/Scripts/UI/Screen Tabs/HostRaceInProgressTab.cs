@@ -19,7 +19,7 @@ namespace UI.Screen.Tab
         }
         private async void ShowRaceResults()
         {
-            int winnerHorseNumber = GameManager.Instance.horsesInRaceOrderList[0];
+            int winnerHorseNumber = GameManager.Instance.HorsesInRaceOrderList[0];
             await GameManager.Instance.CloudCode.SendRaceResults(winnerHorseNumber);
         }
     }

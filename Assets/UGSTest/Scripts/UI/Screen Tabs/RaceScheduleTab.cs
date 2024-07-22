@@ -1,5 +1,6 @@
 using System;
 using System.Globalization;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,6 +9,7 @@ namespace UI.Screen.Tab
 {
     public class RaceScheduleTab : BaseTab
     {
+        #region Inspector Variables
         [SerializeField] private InputField timeGap_Input;
         [SerializeField] private InputField preRaceWaitTime_Input;
         [SerializeField] private Button setScheduleBtn;
@@ -15,17 +17,20 @@ namespace UI.Screen.Tab
 
         [SerializeField] private TimeAdjustmentSettings startSchedule;
         [SerializeField] private TimeAdjustmentSettings endSchedule;
+        #endregion
 
+        #region Unity Methods
         private void OnEnable()
         {
             setScheduleBtn.onClick.AddListener(OnSetScheduleBtnClick);
         }
-
         private void OnDisable()
         {
             setScheduleBtn.onClick.RemoveListener(OnSetScheduleBtnClick);
         }
+        #endregion
 
+        #region Private Methods
         /// <summary>
         /// Converts the local time string to UTC time
         /// </summary>
@@ -50,7 +55,7 @@ namespace UI.Screen.Tab
             return dateTime;
         }
 
-        private void OnSetScheduleBtnClick()
+        private async void OnSetScheduleBtnClick()
         {
             string scheduleStartString = $"{startSchedule.ReturnTime()}";
             string scheduleEndString = $"{endSchedule.ReturnTime()}";
@@ -82,14 +87,16 @@ namespace UI.Screen.Tab
             }
 
             //Set the schedule
-            GameManager.Instance.CloudCode.ScheduleRaceTime(new UGS.CloudCode.HostScheduleRace
+            Func<Task> method = () => GameManager.Instance.CloudCode.ScheduleRaceTime(new UGS.CloudCode.HostScheduleRace
             {
                 ScheduleStart = scheduleStartString,
                 ScheduleEnd = scheduleEndString,
                 TimeGap = int.Parse(timeGap_Input.text),
                 PreRaceWaitTime = int.Parse(preRaceWaitTime_Input.text)
             });
+            await LoadingScreen.Instance.PerformAsyncWithLoading(method);
             Close();
         }
+        #endregion
     }
 }
