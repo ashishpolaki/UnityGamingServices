@@ -27,15 +27,14 @@ namespace HorseRaceCloudCode
                 await gameApiClient.CloudSaveData.SetCustomItemAsync(context, context.ServiceToken, context.ProjectId,
                                        "HostVenue", new SetItemBody(context.PlayerId, venueData));
 
-                //Venue Players
+                //Venue GameData
                 await gameApiClient.CloudSaveData.SetCustomItemBatchAsync(context, context.ServiceToken, context.ProjectId, context.PlayerId,
                 new SetItemBatchBody(new List<SetItemBody>()
                    {
-                           new ("RaceJoinCode",""),
                            new ("RaceLobby", ""),
                            new ("RaceCheckIn", ""),
                            new ("RaceSchedule",""),
-                           new ("Players", "")
+                           new ("RaceResults","")
                    }));
             }
         }

@@ -30,42 +30,17 @@ namespace HorseRaceCloudCode
             if (!string.IsNullOrEmpty(context.PlayerId) && !string.IsNullOrEmpty(hostId))
             {
                 //The Player is in host location, request checkin 
-                await AddPlayerIntoHost(context, hostId);
                 string checkInMessage = await RequestCheckIn(context, hostId, dateTime);
                 return checkInMessage;
             }
             return "Not in Venue Location";
         }
 
-        #region Add Player Into Host
-        /// <summary>
-        /// If Player is in the host location, then add the player into the host list
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="hostID"></param>
-        /// <returns></returns>
-        private async Task AddPlayerIntoHost(IExecutionContext context, string hostID)
-        {
-            List<string> players = await Utils.GetCustomDataWithKey<List<string>>(context, gameApiClient, hostID, "Players");
-
-            //If playerid does not exist in the list, then add it
-            if (!players.Contains(context.PlayerId))
-            {
-                //Add the new player to the list
-                players.Add(context.PlayerId);
-
-                //Update the list in the cloud
-                await gameApiClient.CloudSaveData.SetCustomItemAsync(context, context.ServiceToken, context.ProjectId,
-                                 hostID, new SetItemBody("Players", JsonConvert.SerializeObject(players)));
-            }
-        }
-        #endregion
-
         #region Request CheckIn
         private async Task<string> RequestCheckIn(IExecutionContext context, string hostID, DateTime currentDateTime)
         {
             bool IsCurrentDateExist = false;
-            string key = $"{hostID}{currentDateTime.Year.ToString("YYYY")}{currentDateTime.Month.ToString("MM")}";
+            string key = $"{hostID}{currentDateTime.Year.ToString("D4")}{currentDateTime.Month.ToString("D2")}";
             string message = "Successfully Checked In";
 
             //Get the player checkin records from the cloud
@@ -77,7 +52,7 @@ namespace HorseRaceCloudCode
                 foreach (var currentCheckInItem in playerCheckInsList)
                 {
                     //If the current date matches the date in the list, then update the checkin record.
-                    if (currentCheckInItem.Date == currentDateTime.Date.ToString("MM-dd"))
+                    if (currentCheckInItem.Date == currentDateTime.Date.ToString("dd"))
                     {
                         message = UpdateExistingDateCheckin(currentCheckInItem, currentDateTime);
                         IsCurrentDateExist = true;
@@ -133,7 +108,7 @@ namespace HorseRaceCloudCode
             PlayerCheckIn checkInAttendance = new PlayerCheckIn();
             checkInAttendance.LastCheckInTime = $"{currentDateTime.Hour.ToString("D2")}:{currentDateTime.Minute.ToString("D2")}";
             checkInAttendance.Count = 1;
-            checkInAttendance.Date = currentDateTime.Date.ToString("MM-dd");
+            checkInAttendance.Date = currentDateTime.Date.ToString("dd");
             return checkInAttendance;
         }
         #endregion

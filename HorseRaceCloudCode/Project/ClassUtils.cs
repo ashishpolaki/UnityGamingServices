@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace HorseRaceCloudCode
 {
@@ -74,6 +75,25 @@ namespace HorseRaceCloudCode
         {
             PlayerID = string.Empty;
             PlayerName = string.Empty;
+        }
+    }
+    public class RaceResult
+    {
+        public List<PlayerRaceResult> playerRaceResults { get; set; }
+        public RaceResult()
+        {
+            playerRaceResults = new List<PlayerRaceResult>();
+        }
+    }
+    public class PlayerRaceResult
+    {
+        public string PlayerID { get; set; }
+        public int HorseNumber { get; set; }
+        public int RacePosition { get; set; }
+
+        public PlayerRaceResult()
+        {
+            PlayerID = string.Empty;
         }
     }
 }

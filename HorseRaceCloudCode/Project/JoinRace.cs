@@ -1,5 +1,4 @@
-﻿using Google.Protobuf;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -37,7 +36,6 @@ namespace HorseRaceCloudCode
             }
 
             //Get Upcoming Race Data
-            _logger.LogDebug($"Get Upcoming {currentDateTime}");
             DateTime getRaceTime = GetUpcomingRaceData(getRaceScheduleData, currentDateTime);
             TimeSpan timeUntilNextRace = getRaceTime - currentDateTime;
 
@@ -127,7 +125,7 @@ namespace HorseRaceCloudCode
                 foreach (var currentCheckInItem in playerCheckInsList)
                 {
                     //If the current date matches the date in the list, then update the checkin record.
-                    if (currentCheckInItem.Date == currentDateTime.Date.ToString("MM-dd"))
+                    if (currentCheckInItem.Date == currentDateTime.Date.ToString("dd"))
                     {
                         currentDayCheckIns = currentCheckInItem.Count;
                         break;

@@ -27,7 +27,7 @@ namespace HorseRaceCloudCode
         {
             List<RaceLobbyParticipant>? lobbyPlayers = JsonConvert.DeserializeObject<List<RaceLobbyParticipant>>(lobbyData);
 
-            if(lobbyPlayers != null)
+            if (lobbyPlayers != null)
             {
                 for (int i = 0; i < lobbyPlayers.Count; i++)
                 {
@@ -37,27 +37,32 @@ namespace HorseRaceCloudCode
                 //Set Race Lobby players in Cloud
                 await gameApiClient.CloudSaveData.SetCustomItemAsync(context, context.ServiceToken, context.ProjectId,
                                    context.PlayerId, new SetItemBody("RaceLobby", JsonConvert.SerializeObject(lobbyPlayers)));
+                return true;
             }
             return false;
         }
 
         [CloudCodeFunction("RaceResults")]
-        public async Task SendRaceResultToPlayers(IExecutionContext context, int winnerHorseNumber)
+        public async Task SendRaceResultToPlayers(IExecutionContext context, string raceResultData)
         {
-            List<RaceLobbyParticipant> raceLobbyData = await Utils.GetCustomDataWithKey<List<RaceLobbyParticipant>>(context, gameApiClient, context.PlayerId, "RaceLobby");
+            RaceResult? raceResultsList = JsonConvert.DeserializeObject<RaceResult>(raceResultData);
 
-            for (int i = 0; i < raceLobbyData.Count; i++)
+            if (raceResultsList != null)
             {
-                //Send Message to the players for Race Results
-                await pushClient.SendPlayerMessageAsync(context, $"{winnerHorseNumber}", "RaceResult", raceLobbyData[i].PlayerID);
+                for (int i = 0; i < raceResultsList.playerRaceResults.Count; i++)
+                {
+                    //Send Message to the players for Race Results
+                    await pushClient.SendPlayerMessageAsync(context, $"{raceResultsList.playerRaceResults[i]}", "RaceResult", raceResultsList.playerRaceResults[i].PlayerID);
+                }
             }
 
-            //Clear Lobby Data and Current Race Checkins
+            //Update RaceResults, Clear Lobby Data and Current Race Checkins
             await gameApiClient.CloudSaveData.SetCustomItemBatchAsync(context, context.ServiceToken, context.ProjectId, context.PlayerId,
                 new SetItemBatchBody(new List<SetItemBody>()
                    {
                            new ("RaceLobby", ""),
-                           new ("RaceCheckIn", "")
+                           new ("RaceCheckIn", ""),
+                           new SetItemBody("RaceResults", JsonConvert.SerializeObject(raceResultsList))
                    }));
         }
     }
