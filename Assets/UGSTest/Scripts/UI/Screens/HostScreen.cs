@@ -32,7 +32,7 @@ namespace UI.Screen
         #region Private Methods
         private void RegisterVenue()
         {
-           OpenTab(ScreenTabType.RegisterVenue);
+            OpenTab(ScreenTabType.RegisterVenue);
         }
         private void StartRace()
         {
@@ -46,12 +46,12 @@ namespace UI.Screen
 
         public override void OnScreenBack()
         {
-            base.OnScreenBack();
-            if (!CantGoBack)
+            if (CurrentOpenTab == ScreenTabType.None)
             {
                 UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Show);
                 Close();
             }
+            base.OnScreenBack();
         }
     }
 }

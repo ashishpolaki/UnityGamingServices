@@ -50,10 +50,10 @@ namespace Unity.Services.CloudCode.GeneratedBindings
             return await k_Service.CallModuleEndpointAsync<bool>("HorseRaceCloudCode", "StartRace",
                    new Dictionary<string, object>() { { "lobbyData", lobbyData } });
         }
-        public async Task SendRaceResults(int raceWinnerHorse)
+        public async Task SendRaceResults(string raceResultData)
         {
             await k_Service.CallModuleEndpointAsync("HorseRaceCloudCode", "RaceResults",
-                 new Dictionary<string, object>() { { "winnerHorseNumber", raceWinnerHorse } });
+                 new Dictionary<string, object>() { { "raceResultData", raceResultData } });
         }
     }
 }

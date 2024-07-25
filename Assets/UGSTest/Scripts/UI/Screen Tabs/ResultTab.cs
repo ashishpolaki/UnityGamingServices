@@ -9,8 +9,7 @@ namespace UI.Screen.Tab
 
         private void Start()
         {
-            resultText.text = GameManager.Instance.GameData.IsRaceWinner() ?
-                 "Victory is yours! Well done!" : "Better luck next time!";
+            resultText.text = $"Your race position is {GameManager.Instance.GameData.RaceResult.RacePosition}";
         }
     }
 }

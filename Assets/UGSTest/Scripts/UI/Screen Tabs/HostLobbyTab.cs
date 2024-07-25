@@ -20,14 +20,30 @@ namespace UI.Screen.Tab
         private List<UGS.CloudSave.RaceLobbyParticipant> lobbyPlayerList = new List<UGS.CloudSave.RaceLobbyParticipant>();
 
         #region Unity Methods
-        private async void Start()
+        private void OnEnable()
         {
+            startRace_btn.onClick.AddListener(() => StartRace());
+            RaceStatus();
+        }
+        private void OnDisable()
+        {
+            startRace_btn.onClick.RemoveAllListeners();
+        }
+        #endregion
+
+        private async void RaceStatus()
+        {
+            if (GameManager.Instance.GameData.IsRaceStart)
+            {
+                return;
+            }
+            GameManager.Instance.GameData.IsRaceStart = true;
             //Check in players
             Func<Task<string>> response = () => GameManager.Instance.GetRaceCheckInParticipants();
             string data = await LoadingScreen.Instance.PerformAsyncWithLoading(response);
 
             //Get horses in race order list
-            horsesInRaceOrderList = GameManager.Instance.HorsesInRaceOrderList;
+            horsesInRaceOrderList = GameManager.Instance.HorsesInRaceOrderList.Take(GameManager.Instance.HorsesInRaceOrderList.Count).ToList();
 
             //If no players are checked in, display message and return.
             if (string.IsNullOrEmpty(data))
@@ -43,23 +59,13 @@ namespace UI.Screen.Tab
             ShuffleLobbyPlayersList();
             DisplayLobbyPlayers();
             //PlayerLobbyStatus button if more than 2 players are checked in.
-            // startRace_btn.interactable = (currentRaceCheckins.Count > 1);
+            // startRace_btn.interactable = (currentRaceCheckins.Count > 0);
         }
-        private void OnEnable()
-        {
-            startRace_btn.onClick.AddListener(() => StartRace());
-        }
-        private void OnDisable()
-        {
-            startRace_btn.onClick.RemoveAllListeners();
-        }
-        #endregion
 
         private void DisplayLobbyPlayers()
         {
             if (lobbyPlayerList.Count > 0)
             {
-               // checkInPlayerNamesTxt.text = string.Join("\n", $"{lobbyPlayerList.Select(x => x.PlayerName)} - Horse #{lobbyPlayerList.Select(x => x.HorseNumber)}");
                 checkInPlayerNamesTxt.text = string.Join("\n", lobbyPlayerList.Select(x => $"{x.PlayerName} - Horse #{x.HorseNumber}"));
             }
         }

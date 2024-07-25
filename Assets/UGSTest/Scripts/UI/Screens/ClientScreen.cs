@@ -17,6 +17,9 @@ namespace UI.Screen
         [SerializeField] private TextMeshProUGUI messageText;
         #endregion
 
+        private bool isInRace = false;
+        private bool isRaceResult = false;
+
         #region Unity Methods
         private void OnEnable()
         {
@@ -48,13 +51,16 @@ namespace UI.Screen
 
         public override void OnScreenBack()
         {
-            base.OnScreenBack();
-            if (!CantGoBack)
+            //If no tab is opened and the back button is pressed, then close screen
+            if (CurrentOpenTab == ScreenTabType.None)
             {
                 UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Show);
                 Close();
+                return;
             }
-            if (!IsAnyTabOpened && CantGoBack)
+            base.OnScreenBack();
+
+            if (CurrentOpenTab == ScreenTabType.None)
             {
                 PlayerRaceStatus();
             }
@@ -63,6 +69,8 @@ namespace UI.Screen
         {
             //Get host ID from the currentRaceCheckins location
             string hostID = await GameManager.Instance.GetHostID();
+            isInRace = false;
+            isRaceResult = false;
             if (string.IsNullOrEmpty(hostID))
             {
                 return;
@@ -70,16 +78,25 @@ namespace UI.Screen
 
             //Check if the player is in race lobby. 
             string raceLobbyData = await GameManager.Instance.TryGetRaceLobbyData();
-            bool isInRace = !string.IsNullOrEmpty(raceLobbyData) && !string.IsNullOrWhiteSpace(raceLobbyData);
-            Debug.Log(raceLobbyData);
+            string playerRaceResultData = await GameManager.Instance.TryGetPlayerRaceResult();
+            isInRace = !string.IsNullOrEmpty(raceLobbyData) && !string.IsNullOrWhiteSpace(raceLobbyData);
+            isRaceResult = !string.IsNullOrEmpty(playerRaceResultData) && !string.IsNullOrWhiteSpace(playerRaceResultData);
+
             if (isInRace)
             {
                 UGS.CloudSave.RaceLobbyParticipant raceLobbyParticipant = JsonConvert.DeserializeObject<UGS.CloudSave.RaceLobbyParticipant>(raceLobbyData);
                 GameManager.Instance.GameData.HorseNumber = raceLobbyParticipant.HorseNumber;
             }
 
-            continueRaceButton.gameObject.SetActive(isInRace);
-            joinRaceBtn.interactable = !isInRace;
+            if (isRaceResult)
+            {
+                UGS.CloudSave.PlayerRaceResult playerRaceResult = JsonConvert.DeserializeObject<UGS.CloudSave.PlayerRaceResult>(playerRaceResultData);
+                GameManager.Instance.GameData.RaceResult = playerRaceResult;
+            }
+
+            bool isButtonInteractable = (isInRace || isRaceResult);
+            continueRaceButton.gameObject.SetActive(isButtonInteractable);
+            joinRaceBtn.interactable = !isButtonInteractable;
         }
         private void OnRaceStart(string message)
         {
@@ -87,15 +104,24 @@ namespace UI.Screen
             CloseAllTabs();
             OpenTab(ScreenTabType.RaceInProgress);
         }
-        private void OnRaceResult(int horseNumber)
+        private void OnRaceResult(string _raceResult)
         {
-            GameManager.Instance.GameData.WinnerHorseNumber = horseNumber;
+            UGS.CloudSave.PlayerRaceResult raceResult = JsonConvert.DeserializeObject<UGS.CloudSave.PlayerRaceResult>(_raceResult);
+            GameManager.Instance.GameData.RaceResult = raceResult;
+
             CloseAllTabs();
             OpenTab(ScreenTabType.RaceResults);
         }
         private void ContinueRace()
         {
-            OpenTab(ScreenTabType.RaceInProgress);
+            if (isRaceResult)
+            {
+                OpenTab(ScreenTabType.RaceResults);
+            }
+            else if (isInRace)
+            {
+                OpenTab(ScreenTabType.RaceInProgress);
+            }
         }
         private async void CheckIn()
         {
@@ -159,7 +185,6 @@ namespace UI.Screen
                 UGS.CloudCode.JoinRaceResponse joinRaceResponse = JsonConvert.DeserializeObject<UGS.CloudCode.JoinRaceResponse>(raceJoin);
                 DateTime raceTime = DateTime.Parse(joinRaceResponse.RaceTime);
                 GameManager.Instance.GameData.RaceTime = raceTime;
-
                 if (joinRaceResponse.CanWaitInLobby)
                 {
                     // Show the lobby screen

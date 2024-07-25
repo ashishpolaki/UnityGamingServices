@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,7 @@ namespace UI.Screen.Tab
         [SerializeField] private InputField radiusInput;
         [SerializeField] private Button registerVenueBtn;
         [SerializeField] private Button fetchCurrentLocationBtn;
+        [SerializeField] private TextMeshProUGUI messageTxt;
         #endregion
 
         #region Unity Methods
@@ -41,9 +43,10 @@ namespace UI.Screen.Tab
         }
         private async void RegisterVenue()
         {
+            messageTxt.text = string.Empty;
             if (string.IsNullOrEmpty(locationLatitude.text) || string.IsNullOrEmpty(locationLongitude.text) || string.IsNullOrEmpty(radiusInput.text))
             {
-                Debug.Log("Please fill all the fields");
+                messageTxt.text = "Please fill all the fields";
                 return;
             }
 
@@ -59,7 +62,8 @@ namespace UI.Screen.Tab
                 Longitude = longitude,
                 Radius = radius
             };
-            await GameManager.Instance.CloudCode.RegisterVenue(registerHostItem);
+            Func<Task> method = () =>  GameManager.Instance.CloudCode.RegisterVenue(registerHostItem);
+            await LoadingScreen.Instance.PerformAsyncWithLoading(method);
             Close();
         }
         #endregion

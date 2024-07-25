@@ -10,15 +10,15 @@ namespace UI.Screen
         [SerializeField] private ScreenTabType defaultOpenTab;
         [SerializeField] private List<BaseTab> tabs;
 
+        private ScreenTabType currentOpenTab;
+
         public ScreenType ScreenType => screenType;
         public List<BaseTab> Tabs { get => tabs; }
         public ScreenTabType DefaultOpenTab { get => defaultOpenTab; }
+        public ScreenTabType CurrentOpenTab { get => currentOpenTab; }
 
         public bool IsScreenOpen { get => gameObject.activeSelf; }
-        public bool CantGoBack { get => cantGoBack; private set => cantGoBack = value; }
         public bool IsAnyTabOpened { get => tabs.Exists(tab => tab.IsOpen); }
-
-        private  bool cantGoBack;
 
         public virtual void Open(ScreenTabType screenTabType)
         {
@@ -67,6 +67,7 @@ namespace UI.Screen
             {
                 if (Tabs[i].ScreenTabType == screenTabType)
                 {
+                    currentOpenTab = screenTabType;
                     Tabs[i].Open();
                     break;
                 }
@@ -78,6 +79,7 @@ namespace UI.Screen
             {
                 if (Tabs[i].ScreenTabType == screenTabType)
                 {
+                    currentOpenTab = ScreenTabType.None;
                     Tabs[i].Close();
                     break;
                 }
@@ -89,21 +91,17 @@ namespace UI.Screen
             {
                 Tabs[i].Close();
             }
+            currentOpenTab = ScreenTabType.None;
         }
 
         public virtual void OnScreenBack()
         {
             //Close the tab that is open and then return.
-            foreach (var tab in Tabs)
+            if(currentOpenTab != ScreenTabType.None)
             {
-                if (tab.IsOpen)
-                {
-                    tab.Close();
-                    CantGoBack = true;
-                    return;
-                }
+                CloseTab(currentOpenTab);
+                return;
             }
-            CantGoBack = false;
         }
     }
     public interface IScreen
@@ -111,8 +109,8 @@ namespace UI.Screen
         public List<BaseTab> Tabs { get; }
         public ScreenType ScreenType { get; }
         public ScreenTabType DefaultOpenTab { get; }
+        public ScreenTabType CurrentOpenTab { get; }
         public bool IsScreenOpen { get; }
-        public bool CantGoBack { get; }
         public void OnScreenBack();
         public void Open(ScreenTabType screenTabType);
         public void Close();

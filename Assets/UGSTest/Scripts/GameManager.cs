@@ -106,7 +106,6 @@ public class GameManager : MonoBehaviour
             GameData.CurrentLocationLongitude = GPS.CurrentLocationLongitude;
         }
     }
-
     public async Task<string> GetHostID()
     {
         if (string.IsNullOrEmpty(GameData.HostID))
@@ -131,11 +130,22 @@ public class GameManager : MonoBehaviour
 
     public async Task<string> TryGetRaceLobbyData()
     {
-        Func<Task<string>> response = () => CloudSave.TryGetRaceLobbyData(GameData.HostID, GameData.PlayerID, StringUtils.RACELOBBY);
+        Func<Task<string>> response = () => CloudSave.TryGetPlayerLobbyData(GameData.HostID, GameData.PlayerID, StringUtils.RACELOBBY);
         string raceLobbyData = await LoadingScreen.Instance.PerformAsyncWithLoading(response);
         return raceLobbyData;
     }
-
+    public async Task<string> TryGetRaceLobby()
+    {
+        Func<Task<string>> response = () => CloudSave.TryGetRaceLobby(GameData.PlayerID, StringUtils.RACELOBBY);
+        string raceLobbyData = await LoadingScreen.Instance.PerformAsyncWithLoading(response);
+        return raceLobbyData;
+    }
+    public async Task<string> TryGetPlayerRaceResult()
+    {
+        Func<Task<string>> response = () => CloudSave.TryGetPlayerRaceResult(GameData.HostID, GameData.PlayerID, StringUtils.RACERESULT);
+        string raceLobbyData = await LoadingScreen.Instance.PerformAsyncWithLoading(response);
+        return raceLobbyData;
+    }
     public async Task<string> GetRaceCheckInParticipants()
     {
         Func<Task<string>> response = () => CloudSave.GetRaceCheckInParticipants(GameData.PlayerID, StringUtils.RACECHECKIN);
@@ -154,11 +164,11 @@ public class InGameData
 {
     public string PlayerID { get; set; }
     public string PlayerName { get; set; }
-
+    public bool IsRaceStart { get; set; }
     public DateTime RaceTime { get; set; }
     public bool CanWaitInLobby { get; set; }
     public int HorseNumber { get; set; }
-    public int WinnerHorseNumber { get; set; }
+    public UGS.CloudSave.PlayerRaceResult RaceResult { get; set; }
     public string HostID { get; set; }
     public double CurrentLocationLatitude
     {
@@ -196,10 +206,6 @@ public class InGameData
     private double currentLocationLatitude;
     private double currentLocationLongitude;
 
-    public bool IsRaceWinner()
-    {
-        return WinnerHorseNumber == HorseNumber;
-    }
     public void SetHostID(string _hostID)
     {
         HostID = _hostID;

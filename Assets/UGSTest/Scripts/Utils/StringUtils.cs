@@ -10,5 +10,6 @@ public class StringUtils
     public const string RACESCHEDULE = "RaceSchedule";
     public const string RACECHECKIN = "RaceCheckIn";
     public const string RACELOBBY = "RaceLobby";
+    public const string RACERESULT = "RaceResults";
     #endregion
 }

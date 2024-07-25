@@ -35,7 +35,7 @@ namespace UGS
         private HorseRaceCloudCodeBindings module;
 
         public event Action<string> OnRaceStarted;
-        public event Action<int> OnRaceResult;
+        public event Action<string> OnRaceResult;
 
         public CloudCode()
         {
@@ -58,7 +58,7 @@ namespace UGS
                         OnRaceStarted?.Invoke(@event.Message);
                         break;
                     case "RaceResult":
-                        OnRaceResult?.Invoke(int.Parse(@event.Message));
+                        OnRaceResult?.Invoke(@event.Message);
                         break;
                     default:
                         Debug.Log($"Got unsupported player Message:");
@@ -158,11 +158,11 @@ namespace UGS
             }
             return false;
         }
-        public async Task SendRaceResults(int winnerHorseNumber)
+        public async Task SendRaceResults(string raceResultsData)
         {
             try
             {
-                await module.SendRaceResults(winnerHorseNumber);
+                await module.SendRaceResults(raceResultsData);
             }
             catch (CloudCodeException exception)
             {
