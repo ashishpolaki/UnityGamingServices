@@ -1194,6 +1194,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: RegisterVenueTab
       objectReference: {fileID: 0}
+    - target: {fileID: 5199161789417902190, guid: 378b09076ebadb14687a836c1062fb83, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5399618873008557488, guid: 378b09076ebadb14687a836c1062fb83, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1314,6 +1318,10 @@ PrefabInstance:
     - target: {fileID: 1407721005442215363, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
       propertyPath: minuteChangeStep
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2424723441584411357, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
+      propertyPath: m_Text
+      value: Enter Duration b/w Races
       objectReference: {fileID: 0}
     - target: {fileID: 2424822787358014075, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
       propertyPath: m_Pivot.x

@@ -15,6 +15,8 @@ namespace UI.Screen.Tab
         [SerializeField] private Button registerVenueBtn;
         [SerializeField] private Button fetchCurrentLocationBtn;
         [SerializeField] private TextMeshProUGUI messageTxt;
+        [SerializeField] private float radiusMin = 0;
+        [SerializeField] private float radiusMax = 100;
         #endregion
 
         #region Unity Methods
@@ -50,12 +52,20 @@ namespace UI.Screen.Tab
                 return;
             }
 
+            float radius = float.Parse(radiusInput.text);
+            if(radius <= 1)
+            {
+                messageTxt.text = "Radius should be greater than one.";
+                return;
+            }
+            if(radius >= radiusMax)
+            {
+                messageTxt.text = "Radius should be less than 100.";
+                return;
+            }
+
             double latitude = double.Parse(locationLatitude.text);
             double longitude = double.Parse(locationLongitude.text);
-            float radius = float.Parse(radiusInput.text);
-            //latitude = 17.48477376610915;
-            //longitude = 78.41440387735862;
-
             UGS.CloudCode.HostVenueData registerHostItem = new UGS.CloudCode.HostVenueData
             {
                 Latitude = latitude,

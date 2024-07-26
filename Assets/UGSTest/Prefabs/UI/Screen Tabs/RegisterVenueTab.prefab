@@ -1073,6 +1073,8 @@ MonoBehaviour:
   registerVenueBtn: {fileID: 7066530900272414933}
   fetchCurrentLocationBtn: {fileID: 5126756576799223855}
   messageTxt: {fileID: 5079310992631301806}
+  radiusMin: 1
+  radiusMax: 100
 --- !u!1 &5898626136654123047
 GameObject:
   m_ObjectHideFlags: 0
