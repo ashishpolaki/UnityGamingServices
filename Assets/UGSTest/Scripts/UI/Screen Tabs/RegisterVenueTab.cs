@@ -19,6 +19,12 @@ namespace UI.Screen.Tab
         [SerializeField] private float radiusMax = 100;
         #endregion
 
+        #region Private Variables
+        private double latitude;
+        private double longitude;
+        private float radius;
+        #endregion
+
         #region Unity Methods
         private void OnEnable()
         {
@@ -46,35 +52,63 @@ namespace UI.Screen.Tab
         private async void RegisterVenue()
         {
             messageTxt.text = string.Empty;
-            if (string.IsNullOrEmpty(locationLatitude.text) || string.IsNullOrEmpty(locationLongitude.text) || string.IsNullOrEmpty(radiusInput.text))
+
+            if (!IsGPSLocationValid() || !IsRadiusValid())
             {
-                messageTxt.text = "Please fill all the fields";
                 return;
             }
 
-            float radius = float.Parse(radiusInput.text);
-            if(radius <= 1)
-            {
-                messageTxt.text = "Radius should be greater than one.";
-                return;
-            }
-            if(radius >= radiusMax)
-            {
-                messageTxt.text = "Radius should be less than 100.";
-                return;
-            }
-
-            double latitude = double.Parse(locationLatitude.text);
-            double longitude = double.Parse(locationLongitude.text);
+            //Register Host in Venue Cloud List.
             UGS.CloudCode.HostVenueData registerHostItem = new UGS.CloudCode.HostVenueData
             {
                 Latitude = latitude,
                 Longitude = longitude,
                 Radius = radius
             };
-            Func<Task> method = () =>  GameManager.Instance.CloudCode.RegisterVenue(registerHostItem);
+            Func<Task> method = () => GameManager.Instance.CloudCode.RegisterVenue(registerHostItem);
             await LoadingScreen.Instance.PerformAsyncWithLoading(method);
             Close();
+        }
+
+        private bool IsGPSLocationValid()
+        {
+            if (string.IsNullOrEmpty(locationLatitude.text) || string.IsNullOrEmpty(locationLongitude.text))
+            {
+                messageTxt.text = "Please fetch the current location";
+                return false;
+            }
+            latitude = double.Parse(locationLatitude.text);
+            longitude = double.Parse(locationLongitude.text);
+
+            bool isGPSValid = GameManager.Instance.GPS.IsValidGpsLocation(latitude, longitude);
+            if (!isGPSValid)
+            {
+                messageTxt.text = "The GPS location is not valid.";
+                return false;
+            }
+
+            return true;
+        }
+
+        private bool IsRadiusValid()
+        {
+            if (string.IsNullOrEmpty(radiusInput.text))
+            {
+                messageTxt.text = "Please enter the radius";
+                return false;
+            }
+            radius = float.Parse(radiusInput.text);
+            if (radius <= radiusMin)
+            {
+                messageTxt.text = "Radius should be greater than one.";
+                return false;
+            }
+            if (radius >= radiusMax)
+            {
+                messageTxt.text = "Radius should be less than 100.";
+                return false;
+            }
+            return true;
         }
         #endregion
 
