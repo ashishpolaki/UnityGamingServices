@@ -98,9 +98,11 @@ public class GameManager : MonoBehaviour
         GameData.PlayerName = _playerName;
     }
 
-    public async void FetchCurrentLocation()
+    public async Task FetchCurrentLocation()
     {
-        bool result = await GPS.TryGetLocationAsync();
+        Func<Task<bool>> locationResponse = () => GPS.TryGetLocationAsync();
+        bool result = await LoadingScreen.Instance.PerformAsyncWithLoading(locationResponse);
+
         if (result)
         {
             GameData.CurrentLocationLatitude = GPS.CurrentLocationLatitude;

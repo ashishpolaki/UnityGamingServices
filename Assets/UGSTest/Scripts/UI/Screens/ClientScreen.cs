@@ -33,7 +33,6 @@ namespace UI.Screen
             GameManager.Instance.CloudCode.OnRaceStarted += OnRaceStart;
             GameManager.Instance.CloudCode.OnRaceResult += OnRaceResult;
             PlayerRaceStatus();
-            GameManager.Instance.FetchCurrentLocation();
         }
         private void OnDisable()
         {
@@ -69,6 +68,7 @@ namespace UI.Screen
         private async void PlayerRaceStatus()
         {
             ResetData();
+            await GameManager.Instance.FetchCurrentLocation();
 
             //Get host ID from the currentRaceCheckins location
             string hostID = await GameManager.Instance.GetHostID();
@@ -177,6 +177,8 @@ namespace UI.Screen
 
         private async void EnterRace()
         {
+            await GameManager.Instance.FetchCurrentLocation();
+
             string dateTime = string.Empty;
             messageText.text = string.Empty;
             if (CheatCode.Instance.IsCheatEnabled)
@@ -212,6 +214,8 @@ namespace UI.Screen
 
         private async void VenueCheckIn()
         {
+            await GameManager.Instance.FetchCurrentLocation();
+
             string dateTime = string.Empty;
             messageText.text = string.Empty;
             if (CheatCode.Instance.IsCheatEnabled)

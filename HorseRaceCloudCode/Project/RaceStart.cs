@@ -62,7 +62,7 @@ namespace HorseRaceCloudCode
                 for (int i = 0; i < raceResultsList.playerRaceResults.Count; i++)
                 {
                     //Send Message to the players for Race Results
-                    await pushClient.SendPlayerMessageAsync(context, $"{raceResultsList.playerRaceResults[i]}", "RaceResult", raceResultsList.playerRaceResults[i].PlayerID);
+                    await pushClient.SendPlayerMessageAsync(context, $"{JsonConvert.SerializeObject(raceResultsList.playerRaceResults[i])}", "RaceResult", raceResultsList.playerRaceResults[i].PlayerID);
                 }
             }
 
