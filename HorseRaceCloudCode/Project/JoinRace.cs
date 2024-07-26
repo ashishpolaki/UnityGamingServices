@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Unity.Services.CloudCode.Apis;
 using Unity.Services.CloudCode.Core;
@@ -29,82 +30,73 @@ namespace HorseRaceCloudCode
 
             var getRaceScheduleData = await Utils.GetCustomDataWithKey<RaceScheduleData>(context, gameApiClient, hostID, "RaceSchedule");
 
+            //Check if the player has updated the Race Schedule Time
             if (string.IsNullOrEmpty(getRaceScheduleData.ScheduleStart))
             {
                 joinRaceResponse.Message = "Player Not updated Race Schedule Time";
                 return JsonConvert.SerializeObject(joinRaceResponse);
             }
 
-            //Get Upcoming Race Data
-            DateTime getRaceTime = GetUpcomingRaceData(getRaceScheduleData, currentDateTime);
-            TimeSpan timeUntilNextRace = getRaceTime - currentDateTime;
-
-            //Set JoinRace Response
-            joinRaceResponse.RaceTime = getRaceTime;
-            joinRaceResponse.CanWaitInLobby = timeUntilNextRace.TotalSeconds <= (getRaceScheduleData.PreRaceWaitTime * 60);
-            if (joinRaceResponse.CanWaitInLobby)
+            //Get upcoming race time
+            DateTime raceStartTime = DateTime.ParseExact(getRaceScheduleData.ScheduleStart, "HH:mm", CultureInfo.InvariantCulture);
+            DateTime raceEndTime = DateTime.ParseExact(getRaceScheduleData.ScheduleEnd, "HH:mm", CultureInfo.InvariantCulture);
+            // If the end time is earlier in the day than the start time, add a day to the end time
+            if (raceEndTime < raceStartTime)
             {
-                //player can wait in the lobby
+                raceEndTime = raceEndTime.AddDays(1);
             }
-            else
+
+            List<DateTime> raceTimings = GetRaceTimings(raceStartTime, raceEndTime, TimeSpan.FromMinutes(getRaceScheduleData.TimeGap));
+            DateTime? getRaceDateTime = GetUpcomingRaceTime(raceTimings, currentDateTime);
+
+            if (getRaceDateTime != null)
             {
-                //Show the time the player can join the lobby
-                int totalSeconds = (int)timeUntilNextRace.TotalSeconds;
-                int minutes = totalSeconds / 60;
-                int seconds = totalSeconds % 60;
+                DateTime raceDateTime = getRaceDateTime.Value;
+                TimeSpan timeUntilNextRace = raceDateTime - currentDateTime;
+                joinRaceResponse.RaceTime = raceDateTime;
+                joinRaceResponse.CanWaitInLobby = timeUntilNextRace.TotalSeconds <= (getRaceScheduleData.PreRaceWaitTime * 60);
 
-                timeUntilNextRace = timeUntilNextRace + new TimeSpan(0, -getRaceScheduleData.PreRaceWaitTime, 0);
-
-                joinRaceResponse.Message = $"Player can join the lobby after {timeUntilNextRace.Hours.ToString("D2")}:{timeUntilNextRace.Minutes.ToString("D2")}:{timeUntilNextRace.Seconds.ToString("D2")}";
+                if (!joinRaceResponse.CanWaitInLobby)
+                {
+                    //Show the time the player can join the lobby
+                    timeUntilNextRace = timeUntilNextRace + new TimeSpan(0, -getRaceScheduleData.PreRaceWaitTime, 0);
+                    joinRaceResponse.Message = $"Player can join the lobby after {timeUntilNextRace.Hours.ToString("D2")}:{timeUntilNextRace.Minutes.ToString("D2")}:{timeUntilNextRace.Seconds.ToString("D2")}";
+                }
             }
             return JsonConvert.SerializeObject(joinRaceResponse);
         }
 
-        private DateTime GetUpcomingRaceData(RaceScheduleData raceScheduleData, DateTime currentDateTime)
-        {
-            if (raceScheduleData != null)
-            {
-                // Parse the race start and end times
-                DateTime raceStartTime = DateTime.ParseExact(raceScheduleData.ScheduleStart, "HH:mm", CultureInfo.InvariantCulture);
-                DateTime raceEndTime = DateTime.ParseExact(raceScheduleData.ScheduleEnd, "HH:mm", CultureInfo.InvariantCulture);
 
-                // If the end time is earlier in the day than the start time, add a day to the end time
-                if (raceEndTime < raceStartTime)
-                {
-                    raceEndTime = raceEndTime.AddDays(1);
-                }
-                return GetNextRaceStartTime(currentDateTime, raceStartTime, raceEndTime, raceScheduleData.TimeGap);
+        private DateTime? GetUpcomingRaceTime(List<DateTime> raceTimings, DateTime currentTime)
+        {
+            if (currentTime > raceTimings.Last())
+            {
+                DateTime nextDayFirstRace = raceTimings.First().AddDays(1);
+                return nextDayFirstRace;
             }
-            return currentDateTime;
+            foreach (var raceTime in raceTimings)
+            {
+                if (raceTime > currentTime)
+                {
+                    return raceTime;
+                }
+            }
+            return null; // No upcoming race found
         }
 
-        private DateTime GetNextRaceStartTime(DateTime currentTime, DateTime raceStartTime, DateTime raceEndTime, int intervalMinutes)
+        private List<DateTime> GetRaceTimings(DateTime startTime, DateTime endTime, TimeSpan interval)
         {
-            // Check if the current time is after the race day ends
-            if (currentTime > raceEndTime)
-            {
-                return raceStartTime.AddDays(1);
-            }
-            else
-            {
-                //  TimeSpan timeUntilNextRace;
-                if (currentTime <= raceStartTime)
-                {
-                    // If the current time is before the race starts, calculate the time until the race starts
-                    return raceStartTime;
-                }
-                else
-                {
-                    // Calculate the time until this next race starts, including seconds
-                    TimeSpan timeSinceRaceStart = currentTime - raceStartTime;
-                    int totalSecondsSinceRaceStart = (int)timeSinceRaceStart.TotalSeconds;
-                    int totalSecondsUntilNextRace = intervalMinutes * 60 - (totalSecondsSinceRaceStart % (intervalMinutes * 60));
-                    DateTime nextRaceTime = currentTime.AddSeconds(totalSecondsUntilNextRace);
+            List<DateTime> timings = new List<DateTime>();
+            DateTime currentTime = startTime;
 
-                    return nextRaceTime;
-                }
+            while (currentTime <= endTime)
+            {
+                timings.Add(currentTime);
+                currentTime = currentTime.Add(interval);
             }
+            return timings;
         }
+
 
         [CloudCodeFunction("ConfirmRaceCheckIn")]
         public async Task<bool> ConfirmRaceCheckIn(IExecutionContext context, string hostID, string playerName)
@@ -134,7 +126,7 @@ namespace HorseRaceCloudCode
             }
 
             //Add the player to the list
-            raceCheckInPlayers.Add(new CurrentRacePlayerCheckIn() { PlayerID = context.PlayerId, PlayerName = playerName ,CurrentDayCheckIns = currentDayCheckIns } );
+            raceCheckInPlayers.Add(new CurrentRacePlayerCheckIn() { PlayerID = context.PlayerId, PlayerName = playerName, CurrentDayCheckIns = currentDayCheckIns });
 
             //Save the updated list
             await gameApiClient.CloudSaveData.SetCustomItemAsync(context, context.ServiceToken, context.ProjectId,

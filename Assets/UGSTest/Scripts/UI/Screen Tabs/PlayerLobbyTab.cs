@@ -32,8 +32,7 @@ namespace UI.Screen.Tab
             }
             else
             {
-                DateTime currentDateTime = DateTime.Now;
-                timeLeft = GameManager.Instance.GameData.RaceTime - currentDateTime;
+                timeLeft = GameManager.Instance.GameData.RaceTime - DateTime.UtcNow;
             }
             if (coroutine != null)
             {

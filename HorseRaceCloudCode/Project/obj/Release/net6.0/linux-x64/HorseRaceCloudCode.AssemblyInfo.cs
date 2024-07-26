@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("HorseRaceCloudCode")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4baef50d3687cf34924a528397e1a6f0913913d8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f59b31ba7e3e64ef8475f7cd879c5a75f8d8e962")]
 [assembly: System.Reflection.AssemblyProductAttribute("HorseRaceCloudCode")]
 [assembly: System.Reflection.AssemblyTitleAttribute("HorseRaceCloudCode")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
