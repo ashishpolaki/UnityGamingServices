@@ -70,28 +70,6 @@ namespace UGS
             return string.Empty;
         }
 
-        public async Task<string> TryGetPlayerLobbyData(string hostID, string playerID, string key)
-        {
-            var customItemData = await CloudSaveService.Instance.Data.Custom.LoadAsync(hostID, new HashSet<string> { key });
-
-            if (customItemData.TryGetValue(key, out var item))
-            {
-                string raceItemValue = item.Value.GetAs<string>();
-                if (!string.IsNullOrEmpty(raceItemValue) && !string.IsNullOrWhiteSpace(raceItemValue))
-                {
-                    List<RaceLobbyParticipant> raceLobbyData = JsonConvert.DeserializeObject<List<RaceLobbyParticipant>>(raceItemValue);
-                    foreach (var raceLobbyParticipant in raceLobbyData)
-                    {
-                        if (raceLobbyParticipant.PlayerID == playerID)
-                        {
-                            return JsonConvert.SerializeObject(raceLobbyParticipant);
-                        }
-                    }
-                }
-            }
-            return string.Empty;
-        }
-
         public async Task<bool> IsPlayerAlreadyCheckIn(string hostID, string playerID, string key)
         {
             var customItemData = await CloudSaveService.Instance.Data.Custom.LoadAsync(hostID, new HashSet<string> { key });
@@ -115,22 +93,6 @@ namespace UGS
         }
 
         public async Task<string> GetRaceCheckInParticipants(string hostID, string key)
-        {
-            var customItemData = await CloudSaveService.Instance.Data.Custom.LoadAsync(hostID, new HashSet<string> { key });
-
-            if (customItemData.TryGetValue(key, out var item))
-            {
-                string raceItemValue = item.Value.GetAs<string>();
-                if (!string.IsNullOrEmpty(raceItemValue) && !string.IsNullOrWhiteSpace(raceItemValue))
-                {
-                    List<CurrentRacePlayerCheckIn> checkinPlayers = JsonConvert.DeserializeObject<List<CurrentRacePlayerCheckIn>>(raceItemValue);
-                    return JsonConvert.SerializeObject(checkinPlayers);
-                }
-            }
-            return string.Empty;
-        }
-
-        public async Task<string> GetRaceParticipants(string hostID, string key)
         {
             var customItemData = await CloudSaveService.Instance.Data.Custom.LoadAsync(hostID, new HashSet<string> { key });
 

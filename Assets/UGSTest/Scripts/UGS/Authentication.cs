@@ -89,6 +89,12 @@ namespace UGS
         }
         #endregion
 
+        public void ResetData()
+        {
+            PlayerID = string.Empty;
+            PlayerName = string.Empty;
+        }
+
         public bool IsSignInCached()
         {
             // Check if a cached player already exists by checking if the session token exists

@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
     public CloudCode CloudCode { get; private set; }
     public CloudSave CloudSave { get; private set; }
 
-    public List<int> HorsesInRaceOrderList { get => horsesInRaceOrderList; }
+    public List<int> HorsesInRaceOrderList { get => new List<int>(horsesInRaceOrderList); }
     #endregion
 
     #region Unity Methods
@@ -88,6 +88,7 @@ public class GameManager : MonoBehaviour
 
     private void LoginSuccessful()
     {
+        CloudCode.InitializeBindings();
         CloudCode.SubscribeToPlayerMessages();
         GameData.PlayerName = Authentication.PlayerName;
         GameData.PlayerID = Authentication.PlayerID;
@@ -127,16 +128,9 @@ public class GameManager : MonoBehaviour
         bool isChecked = await LoadingScreen.Instance.PerformAsyncWithLoading(response);
         return isChecked;
     }
-
-    public async Task<string> TryGetRaceLobbyData()
+    public async Task<string> TryGetRaceLobby(string Hostkey)
     {
-        Func<Task<string>> response = () => CloudSave.TryGetPlayerLobbyData(GameData.HostID, GameData.PlayerID, StringUtils.RACELOBBY);
-        string raceLobbyData = await LoadingScreen.Instance.PerformAsyncWithLoading(response);
-        return raceLobbyData;
-    }
-    public async Task<string> TryGetRaceLobby()
-    {
-        Func<Task<string>> response = () => CloudSave.TryGetRaceLobby(GameData.PlayerID, StringUtils.RACELOBBY);
+        Func<Task<string>> response = () => CloudSave.TryGetRaceLobby(Hostkey, StringUtils.RACELOBBY);
         string raceLobbyData = await LoadingScreen.Instance.PerformAsyncWithLoading(response);
         return raceLobbyData;
     }
@@ -156,6 +150,7 @@ public class GameManager : MonoBehaviour
     public void ResetData()
     {
         GameData = new InGameData();
+        Authentication.ResetData();
     }
 }
 
@@ -178,7 +173,7 @@ public class InGameData
             {
                 return CheatCode.Instance.Latitude;
             }
-            currentLocationLatitude = 17.48477376610915;
+            //return currentLocationLatitude = 17.48477376610915;
             return currentLocationLatitude;
         }
         set
@@ -194,7 +189,7 @@ public class InGameData
             {
                 return CheatCode.Instance.Longitude;
             }
-            currentLocationLongitude = 78.41440387735862;
+            // return currentLocationLongitude = 78.41440387735862;
             return currentLocationLongitude;
         }
         set

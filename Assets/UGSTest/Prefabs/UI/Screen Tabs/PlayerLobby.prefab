@@ -153,7 +153,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3054572433414472138
 RectTransform:
   m_ObjectHideFlags: 0
@@ -228,7 +228,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   screenTabType: 6
-  raceStartTimeTxt: {fileID: 3445611651101872619}
+  displayTxt: {fileID: 3445611651101872619}
   raceCheckInBtn: {fileID: 6204033305999029216}
 --- !u!1 &4278853735327366852
 GameObject:
@@ -377,7 +377,7 @@ GameObject:
   - component: {fileID: 801444877462581898}
   - component: {fileID: 3445611651101872619}
   m_Layer: 5
-  m_Name: RaceTimeTxt
+  m_Name: DisplayTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

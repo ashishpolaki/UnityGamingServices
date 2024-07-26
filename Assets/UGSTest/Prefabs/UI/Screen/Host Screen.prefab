@@ -1194,10 +1194,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: RegisterVenueTab
       objectReference: {fileID: 0}
-    - target: {fileID: 5199161789417902190, guid: 378b09076ebadb14687a836c1062fb83, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 5399618873008557488, guid: 378b09076ebadb14687a836c1062fb83, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1311,18 +1307,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 613267245575783683}
     m_Modifications:
-    - target: {fileID: 1407721005442215363, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: minuteMaxLimit
-      value: 59
-      objectReference: {fileID: 0}
-    - target: {fileID: 1407721005442215363, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: minuteChangeStep
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2424723441584411357, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: m_Text
-      value: Enter Duration b/w Races
-      objectReference: {fileID: 0}
     - target: {fileID: 2424822787358014075, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1411,42 +1395,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: RaceScheduleTab
       objectReference: {fileID: 0}
-    - target: {fileID: 5993506968066583679, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7502885708194616826, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: m_text
-      value: 'End Schedule :'
-      objectReference: {fileID: 0}
-    - target: {fileID: 7502885708194616826, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: m_fontSize
-      value: 55.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8812873100079941392, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: minuteMaxLimit
-      value: 59
-      objectReference: {fileID: 0}
-    - target: {fileID: 8812873100079941392, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: minuteChangeStep
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8968766680205448880, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8968766680205448880, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8968766680205448880, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 4827407759790642787}
-    - target: {fileID: 8968766680205448880, guid: 326f35d81f72d0442882fdb5c1da0c70, type: 3}
-      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1476,33 +1424,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 613267245575783683}
     m_Modifications:
-    - target: {fileID: 1787795124814483778, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0.9112903
-      objectReference: {fileID: 0}
-    - target: {fileID: 1787795124814483778, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0.8459757
-      objectReference: {fileID: 0}
-    - target: {fileID: 1787795124814483778, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1787795124814483778, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2726543445148607198, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: screenTabType
-      value: 6
-      objectReference: {fileID: 0}
     - target: {fileID: 3343613839985237547, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
       propertyPath: m_Name
       value: HostLobbyTab
-      objectReference: {fileID: 0}
-    - target: {fileID: 3343613839985237547, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6696116785725737007, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
       propertyPath: m_Pivot.x
@@ -1588,46 +1512,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8408655124196672459, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0.2238832
-      objectReference: {fileID: 0}
-    - target: {fileID: 8408655124196672459, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8408655124196672459, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426266203921262137, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0.59683025
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426266203921262137, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0.18945152
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426266203921262137, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0.40316972
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426266203921262137, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0.14388183
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426266203921262137, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426266203921262137, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8426266203921262137, guid: 38bc57d6f93b9014783034f55c96ded8, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1657,10 +1541,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 613267245575783683}
     m_Modifications:
-    - target: {fileID: 1189230313646786381, guid: 992081b83ca506348affa03dd933074d, type: 3}
-      propertyPath: screenTabType
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 4695678683935807231, guid: 992081b83ca506348affa03dd933074d, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1748,10 +1628,6 @@ PrefabInstance:
     - target: {fileID: 4891481190671600417, guid: 992081b83ca506348affa03dd933074d, type: 3}
       propertyPath: m_Name
       value: HostRaceInProgressTab
-      objectReference: {fileID: 0}
-    - target: {fileID: 4891481190671600417, guid: 992081b83ca506348affa03dd933074d, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

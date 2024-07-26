@@ -79,7 +79,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Enter TimeGap b/w Races
+  m_Text: Enter Duration b/w Races
 --- !u!1 &2826239648589559969
 GameObject:
   m_ObjectHideFlags: 0
@@ -632,7 +632,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2424822787358014075
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1116,6 +1116,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2424822787358014075}
     m_Modifications:
+    - target: {fileID: 2346597941392616741, guid: ad897d15f06077f47b84bf400db7ae00, type: 3}
+      propertyPath: minuteMaxLimit
+      value: 59
+      objectReference: {fileID: 0}
+    - target: {fileID: 2346597941392616741, guid: ad897d15f06077f47b84bf400db7ae00, type: 3}
+      propertyPath: minuteChangeStep
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4441843230276770974, guid: ad897d15f06077f47b84bf400db7ae00, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1239,11 +1247,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2346597941392616741, guid: ad897d15f06077f47b84bf400db7ae00, type: 3}
       propertyPath: minuteMaxLimit
-      value: 30
+      value: 59
+      objectReference: {fileID: 0}
+    - target: {fileID: 2346597941392616741, guid: ad897d15f06077f47b84bf400db7ae00, type: 3}
+      propertyPath: minuteChangeStep
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3657712131769991119, guid: ad897d15f06077f47b84bf400db7ae00, type: 3}
+      propertyPath: m_text
+      value: 'End Schedule :'
       objectReference: {fileID: 0}
     - target: {fileID: 3657712131769991119, guid: ad897d15f06077f47b84bf400db7ae00, type: 3}
       propertyPath: m_fontSize
-      value: 50.6
+      value: 55.3
       objectReference: {fileID: 0}
     - target: {fileID: 4441843230276770974, guid: ad897d15f06077f47b84bf400db7ae00, type: 3}
       propertyPath: m_Pivot.x

@@ -52,10 +52,10 @@ namespace Unity.Services.CloudCode.GeneratedBindings
             return await k_Service.CallModuleEndpointAsync<bool>("HorseRaceCloudCode", "ConfirmRaceCheckIn",
                                  new Dictionary<string, object>() { { "hostID", hostID }, { "playerName", playerName } });
         }
-        public async Task<bool> StartRace(string lobbyData)
+        public async Task<bool> StartRace(string lobbyData, List<string> notQualifiedPlayersList)
         {
             return await k_Service.CallModuleEndpointAsync<bool>("HorseRaceCloudCode", "StartRace",
-                   new Dictionary<string, object>() { { "lobbyData", lobbyData } });
+                   new Dictionary<string, object>() { { "lobbyData", lobbyData }, { "notQualifiedPlayersList", notQualifiedPlayersList } });
         }
         public async Task SendRaceResults(string raceResultData)
         {

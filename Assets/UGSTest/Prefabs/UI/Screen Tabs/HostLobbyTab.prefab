@@ -168,7 +168,7 @@ RectTransform:
   m_Father: {fileID: 6696116785725737007}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.000003092448, y: 0.2238834}
+  m_AnchorMin: {x: 0.000003092448, y: 0.2238832}
   m_AnchorMax: {x: 1.0000031, y: 0.8459759}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
@@ -305,10 +305,10 @@ RectTransform:
   m_Father: {fileID: 6696116785725737007}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -782}
-  m_SizeDelta: {x: 217.8681, y: 106.90655}
+  m_AnchorMin: {x: 0.40316972, y: 0.14388183}
+  m_AnchorMax: {x: 0.59683025, y: 0.18945152}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &896928867873212634
 CanvasRenderer:
@@ -425,8 +425,8 @@ RectTransform:
   m_Father: {fileID: 6696116785725737007}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.000003092448, y: 0.8459761}
-  m_AnchorMax: {x: 1.0000031, y: 0.94709593}
+  m_AnchorMin: {x: 0.000003092448, y: 0.8459757}
+  m_AnchorMax: {x: 1.0000031, y: 0.9112903}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -619,6 +619,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90a91d74e7fe9cc4e94a1f81d3c3b42f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  screenTabType: 7
+  screenTabType: 6
   startRace_btn: {fileID: 3991480015438581445}
   checkInPlayerNamesTxt: {fileID: 3188407291588214110}

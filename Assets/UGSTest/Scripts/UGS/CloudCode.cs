@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Services.CloudCode;
 using Unity.Services.CloudCode.GeneratedBindings;
@@ -39,8 +40,6 @@ namespace UGS
 
         public CloudCode()
         {
-            // create a new instance of the module
-            InitializeBindings();
         }
         public async void InitializeBindings()
         {
@@ -146,11 +145,11 @@ namespace UGS
             }
             return false;
         }
-        public async Task<bool> StartRace(string lobbyData)
+        public async Task<bool> StartRace(string lobbyData,List<string> notQualifiedPlayersList)
         {
             try
             {
-                return await module.StartRace(lobbyData);
+                return await module.StartRace(lobbyData, notQualifiedPlayersList);
             }
             catch (CloudCodeException exception)
             {

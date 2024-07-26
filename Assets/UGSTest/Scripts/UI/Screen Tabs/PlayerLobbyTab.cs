@@ -9,7 +9,7 @@ namespace UI.Screen.Tab
 {
     public class PlayerLobbyTab : BaseTab
     {
-        [SerializeField] private TextMeshProUGUI raceStartTimeTxt;
+        [SerializeField] private TextMeshProUGUI displayTxt;
         [SerializeField] private Button raceCheckInBtn;
 
         private TimeSpan timeLeft = new TimeSpan();
@@ -41,23 +41,20 @@ namespace UI.Screen.Tab
             coroutine = StartCoroutine(StartCountDownTimeLeft());
 
             bool isCheckedInAlready = await GameManager.Instance.IsPlayerAlreadyCheckIn();
-            if (isCheckedInAlready)
-            {
-                raceCheckInBtn.interactable = false;
-            }
+            raceCheckInBtn.interactable = !isCheckedInAlready;
         }
 
         IEnumerator StartCountDownTimeLeft()
         {
             while (timeLeft.TotalSeconds >= 0)
             {
-                raceStartTimeTxt.text = $"Race Starts in : \n {timeLeft.Hours.ToString("D2")}:{timeLeft.Minutes.ToString("D2")}:{timeLeft.Seconds.ToString("D2")}";
+                displayTxt.text = $"Race Starts in : \n {timeLeft.Hours.ToString("D2")}:{timeLeft.Minutes.ToString("D2")}:{timeLeft.Seconds.ToString("D2")}";
                 yield return new WaitForSecondsRealtime(1f);
                 //Decrease the timeleft by 1 second
                 timeLeft = timeLeft.Add(TimeSpan.FromSeconds(-1));
                 //timeLeft.Add(TimeSpan.FromSeconds(-1));
             }
-            raceStartTimeTxt.text = "Race Will Start Soon";
+            displayTxt.text = "Race Will Start Soon";
         }
 
         private async void RaceConfirmCheckIn()

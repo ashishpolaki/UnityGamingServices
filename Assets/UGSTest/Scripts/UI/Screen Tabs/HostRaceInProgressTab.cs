@@ -1,7 +1,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,10 +22,10 @@ namespace UI.Screen.Tab
         private async void ShowRaceResults()
         {
             //Get the horses with race Positions
-            List<int> racePositionHorseNumbers = GameManager.Instance.HorsesInRaceOrderList.Take(GameManager.Instance.HorsesInRaceOrderList.Count).ToList();
+            List<int> racePositionHorseNumbers = GameManager.Instance.HorsesInRaceOrderList;
 
             //Get the lobby players
-            string lobbyPlayers = await GameManager.Instance.TryGetRaceLobby();
+            string lobbyPlayers = await GameManager.Instance.TryGetRaceLobby(GameManager.Instance.GameData.PlayerID);
             List<UGS.CloudSave.RaceLobbyParticipant> raceLobbyParticipants = JsonConvert.DeserializeObject<List<UGS.CloudSave.RaceLobbyParticipant>>(lobbyPlayers);
 
             //Create race result data.

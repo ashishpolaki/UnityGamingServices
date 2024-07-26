@@ -194,7 +194,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8e2e1e4b82311346ad6790d587a2e7d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  screenTabType: 9
+  screenTabType: 8
   raceResultsButton: {fileID: 5539656043815398240}
 --- !u!1 &6921085750279212887
 GameObject:

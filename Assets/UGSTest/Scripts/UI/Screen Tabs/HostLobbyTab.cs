@@ -38,28 +38,41 @@ namespace UI.Screen.Tab
                 return;
             }
             GameManager.Instance.GameData.IsRaceStart = true;
+
+            string playersRaceCheckIn = await HasPlayersCheckedIn();
+            if (string.IsNullOrEmpty(playersRaceCheckIn))
+            {
+                return;
+            }
+
+            //Get horses in race order list.
+            horsesInRaceOrderList = GameManager.Instance.HorsesInRaceOrderList;
+            List<UGS.CloudSave.CurrentRacePlayerCheckIn> checkins = JsonConvert.DeserializeObject<List<UGS.CloudSave.CurrentRacePlayerCheckIn>>(playersRaceCheckIn);
+            currentRaceCheckins = checkins.ToDictionary(checkin => checkin.PlayerID, checkin => checkin);
+
+            await SetRaceWinner();
+            SetRemainingRacePlayers();
+            ShuffleLobbyPlayersList();
+            DisplayLobbyPlayers();
+
+            //PlayerLobbyStatus button if more than 2 players are checked in.
+            // startRace_btn.interactable = (currentRaceCheckins.Count > 0);
+        }
+
+        private async Task<string> HasPlayersCheckedIn()
+        {
             //Check in players
             Func<Task<string>> response = () => GameManager.Instance.GetRaceCheckInParticipants();
             string data = await LoadingScreen.Instance.PerformAsyncWithLoading(response);
-
-            //Get horses in race order list
-            horsesInRaceOrderList = GameManager.Instance.HorsesInRaceOrderList.Take(GameManager.Instance.HorsesInRaceOrderList.Count).ToList();
 
             //If no players are checked in, display message and return.
             if (string.IsNullOrEmpty(data))
             {
                 checkInPlayerNamesTxt.text = "No Players Checked In";
-                return;
+                return string.Empty;
             }
 
-            List<UGS.CloudSave.CurrentRacePlayerCheckIn> checkins = JsonConvert.DeserializeObject<List<UGS.CloudSave.CurrentRacePlayerCheckIn>>(data);
-            currentRaceCheckins = checkins.ToDictionary(checkin => checkin.PlayerID, checkin => checkin);
-            await SetRaceWinner();
-            SetRemainingRacePlayers();
-            ShuffleLobbyPlayersList();
-            DisplayLobbyPlayers();
-            //PlayerLobbyStatus button if more than 2 players are checked in.
-            // startRace_btn.interactable = (currentRaceCheckins.Count > 0);
+            return data;
         }
 
         private void DisplayLobbyPlayers()
@@ -100,7 +113,6 @@ namespace UI.Screen.Tab
                 AddPlayerToLobby(randomPlayerKey);
             }
         }
-
         private void AddPlayerToLobby(string playerKey)
         {
             lobbyPlayerList.Add(new UGS.CloudSave.RaceLobbyParticipant
@@ -117,8 +129,9 @@ namespace UI.Screen.Tab
         private async void StartRace()
         {
             string lobbyData = JsonConvert.SerializeObject(lobbyPlayerList);
+            List<string> notQualifiedPlayersList = currentRaceCheckins.Keys.ToList();
 
-            Func<Task<bool>> response = () => GameManager.Instance.CloudCode.StartRace(lobbyData);
+            Func<Task<bool>> response = () => GameManager.Instance.CloudCode.StartRace(lobbyData, notQualifiedPlayersList);
             bool canStartRace = await LoadingScreen.Instance.PerformAsyncWithLoading(response);
 
             if (canStartRace)

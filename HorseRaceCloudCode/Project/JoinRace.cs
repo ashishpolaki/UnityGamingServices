@@ -107,7 +107,7 @@ namespace HorseRaceCloudCode
             //Get current day player checkins for the player
             int currentDayCheckIns = 0;
             DateTime currentDateTime = DateTime.UtcNow;
-            string key = $"{hostID}{currentDateTime.Year.ToString("YYYY")}{currentDateTime.Month.ToString("MM")}";
+            string key = $"{hostID}{currentDateTime.Year.ToString("D4")}{currentDateTime.Month.ToString("D2")}";
 
             List<PlayerCheckIn>? playerCheckInsList = await Utils.GetProtectedDataWithKey<List<PlayerCheckIn>>(context, gameApiClient, context.PlayerId, key);
 

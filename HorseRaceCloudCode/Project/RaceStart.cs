@@ -23,7 +23,7 @@ namespace HorseRaceCloudCode
         }
 
         [CloudCodeFunction("StartRace")]
-        public async Task<bool> StartRace(IExecutionContext context, string lobbyData)
+        public async Task<bool> StartRace(IExecutionContext context, string lobbyData, List<string> notQualifiedPlayersList)
         {
             List<RaceLobbyParticipant>? lobbyPlayers = JsonConvert.DeserializeObject<List<RaceLobbyParticipant>>(lobbyData);
 
@@ -34,9 +34,19 @@ namespace HorseRaceCloudCode
                     await pushClient.SendPlayerMessageAsync(context, $"{lobbyPlayers[i].HorseNumber}", "RaceStart", lobbyPlayers[i].PlayerID);
                 }
 
-                //Set Race Lobby players in Cloud
-                await gameApiClient.CloudSaveData.SetCustomItemAsync(context, context.ServiceToken, context.ProjectId,
-                                   context.PlayerId, new SetItemBody("RaceLobby", JsonConvert.SerializeObject(lobbyPlayers)));
+                //For unqualified players send zero as horse number
+                foreach (var unQualifiedPlayer in notQualifiedPlayersList)
+                {
+                    await pushClient.SendPlayerMessageAsync(context, $"{0}", "RaceStart", unQualifiedPlayer);
+                }
+
+                //Set Race Lobby players in Cloud and reset RaceResults
+                await gameApiClient.CloudSaveData.SetCustomItemBatchAsync(context, context.ServiceToken, context.ProjectId, context.PlayerId,
+                   new SetItemBatchBody(new List<SetItemBody>()
+                      {
+                           new SetItemBody("RaceLobby", JsonConvert.SerializeObject(lobbyPlayers)),
+                           new (StringUtils.RACERESULTSKEY,"")
+                      }));
                 return true;
             }
             return false;
