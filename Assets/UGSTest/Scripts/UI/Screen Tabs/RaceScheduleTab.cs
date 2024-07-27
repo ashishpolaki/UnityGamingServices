@@ -70,7 +70,7 @@ namespace UI.Screen.Tab
             }
 
             //Set the schedule
-            Func<Task> method = () => GameManager.Instance.CloudCode.ScheduleRaceTime(new UGS.CloudCode.HostScheduleRace
+            Func<Task> method = () => UGSManager.Instance.CloudCode.ScheduleRaceTime(new UGS.CloudCode.HostScheduleRace
             {
                 ScheduleStart = raceStartSchedule,
                 ScheduleEnd = raceEndSchedule,

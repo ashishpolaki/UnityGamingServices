@@ -29,7 +29,7 @@ namespace UI.Screen.Tab
         #region Private Methods
         private void SetPlayerName()
         {
-            playerNameTxt.text = "Player Name : " + GameManager.Instance.GameData.PlayerName;
+            playerNameTxt.text = "Player Name : " + UGSManager.Instance.GameData.PlayerName;
         }
         private void JoinGame()
         {

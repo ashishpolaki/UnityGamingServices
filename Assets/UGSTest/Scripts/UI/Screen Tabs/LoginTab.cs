@@ -19,14 +19,14 @@ namespace UI.Screen.Tab
         private void OnEnable()
         {
             loginBtn.onClick.AddListener(() => Login());
-            GameManager.Instance.Authentication.OnSignInFailed += OnSignInFailed;
+            UGSManager.Instance.Authentication.OnSignInFailed += OnSignInFailed;
         }
         private void OnDisable()
         {
             loginBtn.onClick.RemoveAllListeners();
-            if (GameManager.Instance != null)
+            if (UGSManager.Instance != null)
             {
-                GameManager.Instance.Authentication.OnSignInFailed -= OnSignInFailed;
+                UGSManager.Instance.Authentication.OnSignInFailed -= OnSignInFailed;
             }
         }
         #endregion
@@ -43,7 +43,7 @@ namespace UI.Screen.Tab
                 errorMessageTxt.text = "Please fill all the fields";
                 return;
             }
-            Func<Task> method = () => GameManager.Instance.Authentication.SignInWithUsernamePasswordAsync(username_Input.text, password_Input.text);
+            Func<Task> method = () => UGSManager.Instance.Authentication.SignInWithUsernamePasswordAsync(username_Input.text, password_Input.text);
             await LoadingScreen.Instance.PerformAsyncWithLoading(method);
         }
         #endregion

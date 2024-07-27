@@ -22,10 +22,10 @@ namespace UI.Screen.Tab
         private async void ShowRaceResults()
         {
             //Get the horses with race Positions
-            List<int> racePositionHorseNumbers = GameManager.Instance.HorsesInRaceOrderList;
+            List<int> racePositionHorseNumbers = UGSManager.Instance.HorsesInRaceOrderList;
 
             //Get the lobby players
-            string lobbyPlayers = await GameManager.Instance.TryGetRaceLobby(GameManager.Instance.GameData.PlayerID);
+            string lobbyPlayers = await UGSManager.Instance.TryGetRaceLobby(UGSManager.Instance.GameData.PlayerID);
             List<UGS.CloudSave.RaceLobbyParticipant> raceLobbyParticipants = JsonConvert.DeserializeObject<List<UGS.CloudSave.RaceLobbyParticipant>>(lobbyPlayers);
 
             //Create race result data.
@@ -42,11 +42,11 @@ namespace UI.Screen.Tab
             
             //Upload race results in cloud
             string raceResultSerialize = JsonConvert.SerializeObject(raceResult);
-            Func<Task> raceResultResponse = () => GameManager.Instance.CloudCode.SendRaceResults(raceResultSerialize);
+            Func<Task> raceResultResponse = () => UGSManager.Instance.CloudCode.SendRaceResults(raceResultSerialize);
             await LoadingScreen.Instance.PerformAsyncWithLoading(raceResultResponse);
 
             //Change the screen after uploading results in cloud.
-            GameManager.Instance.GameData.IsRaceStart = false;
+            UGSManager.Instance.GameData.IsRaceStart = false;
             UIController.Instance.ScreenEvent(ScreenType.Host, UIScreenEvent.Close);
             UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Open);
         }

@@ -34,12 +34,12 @@ namespace UI.Screen.Tab
         private void OnEnable()
         {
             registerPlayer_btn.onClick.AddListener(() => RegisterPlayer());
-            GameManager.Instance.Authentication.OnSignInFailed += OnSignUpFailed;
+            UGSManager.Instance.Authentication.OnSignInFailed += OnSignUpFailed;
         }
         private void OnDisable()
         {
             registerPlayer_btn.onClick.RemoveAllListeners();
-            GameManager.Instance.Authentication.OnSignInFailed -= OnSignUpFailed;
+            UGSManager.Instance.Authentication.OnSignInFailed -= OnSignUpFailed;
         }
         #endregion
 
@@ -71,7 +71,7 @@ namespace UI.Screen.Tab
                 return;
             }
 
-            Func<Task> method = () => GameManager.Instance.Authentication.SignUpAsync(userName, password);
+            Func<Task> method = () => UGSManager.Instance.Authentication.SignUpAsync(userName, password);
             await LoadingScreen.Instance.PerformAsyncWithLoading(method);
         }
         #endregion

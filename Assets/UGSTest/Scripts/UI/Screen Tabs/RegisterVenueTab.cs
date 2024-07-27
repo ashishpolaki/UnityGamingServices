@@ -41,12 +41,12 @@ namespace UI.Screen.Tab
         #region Private Methods
         private async void FetchCurrentLocation()
         {
-            Func<Task<bool>> method = () => GameManager.Instance.GPS.TryGetLocationAsync();
+            Func<Task<bool>> method = () => UGSManager.Instance.GPS.TryGetLocationAsync();
             bool result = await LoadingScreen.Instance.PerformAsyncWithLoading<bool>(method);
             if (result)
             {
-                locationLatitude.text = GameManager.Instance.GPS.CurrentLocationLatitude.ToString();
-                locationLongitude.text = GameManager.Instance.GPS.CurrentLocationLongitude.ToString();
+                locationLatitude.text = UGSManager.Instance.GPS.CurrentLocationLatitude.ToString();
+                locationLongitude.text = UGSManager.Instance.GPS.CurrentLocationLongitude.ToString();
             }
         }
         private async void RegisterVenue()
@@ -65,7 +65,7 @@ namespace UI.Screen.Tab
                 Longitude = longitude,
                 Radius = radius
             };
-            Func<Task> method = () => GameManager.Instance.CloudCode.RegisterVenue(registerHostItem);
+            Func<Task> method = () => UGSManager.Instance.CloudCode.RegisterVenue(registerHostItem);
             await LoadingScreen.Instance.PerformAsyncWithLoading(method);
             Close();
         }
@@ -80,7 +80,7 @@ namespace UI.Screen.Tab
             latitude = double.Parse(locationLatitude.text);
             longitude = double.Parse(locationLongitude.text);
 
-            bool isGPSValid = GameManager.Instance.GPS.IsValidGpsLocation(latitude, longitude);
+            bool isGPSValid = UGSManager.Instance.GPS.IsValidGpsLocation(latitude, longitude);
             if (!isGPSValid)
             {
                 messageTxt.text = "The GPS location is not valid.";

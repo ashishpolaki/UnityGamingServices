@@ -9,7 +9,7 @@ namespace UI.Screen.Tab
 
         private void Start()
         {
-            resultText.text = $"Your race position is {GameManager.Instance.GameData.RaceResult.RacePosition}";
+            resultText.text = $"Your race position is {UGSManager.Instance.GameData.RaceResult.RacePosition}";
         }
     }
 }

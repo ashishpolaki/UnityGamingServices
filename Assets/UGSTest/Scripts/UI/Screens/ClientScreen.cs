@@ -30,8 +30,8 @@ namespace UI.Screen
             joinRaceBtn.onClick.AddListener(() => EnterRace());
             backButton.onClick.AddListener(() => OnScreenBack());
             raceStatusButton.onClick.AddListener(() => OnRaceStatusHandle());
-            GameManager.Instance.CloudCode.OnRaceStarted += OnRaceStart;
-            GameManager.Instance.CloudCode.OnRaceResult += OnRaceResult;
+            UGSManager.Instance.CloudCode.OnRaceStarted += OnRaceStart;
+            UGSManager.Instance.CloudCode.OnRaceResult += OnRaceResult;
             PlayerRaceStatus();
         }
         private void OnDisable()
@@ -40,10 +40,10 @@ namespace UI.Screen
             joinRaceBtn.onClick.RemoveAllListeners();
             backButton.onClick.RemoveAllListeners();
             raceStatusButton.onClick.RemoveAllListeners();
-            if (GameManager.Instance != null)
+            if (UGSManager.Instance != null)
             {
-                GameManager.Instance.CloudCode.OnRaceStarted -= OnRaceStart;
-                GameManager.Instance.CloudCode.OnRaceResult -= OnRaceResult;
+                UGSManager.Instance.CloudCode.OnRaceStarted -= OnRaceStart;
+                UGSManager.Instance.CloudCode.OnRaceResult -= OnRaceResult;
             }
         }
         #endregion
@@ -68,10 +68,10 @@ namespace UI.Screen
         private async void PlayerRaceStatus()
         {
             ResetData();
-            await GameManager.Instance.FetchCurrentLocation();
+            await UGSManager.Instance.FetchCurrentLocation();
 
             //Get host ID from the currentRaceCheckins location
-            string hostID = await GameManager.Instance.GetHostID();
+            string hostID = await UGSManager.Instance.GetHostID();
             if (string.IsNullOrEmpty(hostID))
             {
                 return;
@@ -96,7 +96,7 @@ namespace UI.Screen
         private async Task<bool> VerifyRaceLobby()
         {
             //Check if the race lobby data exists. 
-            string raceLobbyData = await GameManager.Instance.TryGetRaceLobby(GameManager.Instance.GameData.HostID);
+            string raceLobbyData = await UGSManager.Instance.TryGetRaceLobby(UGSManager.Instance.GameData.HostID);
             bool isRaceLobbyExists = !string.IsNullOrEmpty(raceLobbyData) && !string.IsNullOrWhiteSpace(raceLobbyData);
             bool isInRace = false;
 
@@ -105,9 +105,9 @@ namespace UI.Screen
                 List<UGS.CloudSave.RaceLobbyParticipant> raceLobbyParticipants = JsonConvert.DeserializeObject<List<UGS.CloudSave.RaceLobbyParticipant>>(raceLobbyData);
                 foreach (var lobbyParticipant in raceLobbyParticipants)
                 {
-                    if (lobbyParticipant.PlayerID == GameManager.Instance.GameData.PlayerID)
+                    if (lobbyParticipant.PlayerID == UGSManager.Instance.GameData.PlayerID)
                     {
-                        GameManager.Instance.GameData.HorseNumber = lobbyParticipant.HorseNumber;
+                        UGSManager.Instance.GameData.HorseNumber = lobbyParticipant.HorseNumber;
                         isInRace = true;
                         break;
                     }
@@ -127,14 +127,14 @@ namespace UI.Screen
 
         private async Task<bool> VerifyRaceResults()
         {
-            string playerRaceResultData = await GameManager.Instance.TryGetPlayerRaceResult();
+            string playerRaceResultData = await UGSManager.Instance.TryGetPlayerRaceResult();
             bool canSeeRaceResults = false;
             if (!string.IsNullOrEmpty(playerRaceResultData) && !string.IsNullOrWhiteSpace(playerRaceResultData))
             {
                 UGS.CloudSave.PlayerRaceResult playerRaceResult = JsonConvert.DeserializeObject<UGS.CloudSave.PlayerRaceResult>(playerRaceResultData);
-                if (playerRaceResult.PlayerID == GameManager.Instance.GameData.PlayerID)
+                if (playerRaceResult.PlayerID == UGSManager.Instance.GameData.PlayerID)
                 {
-                    GameManager.Instance.GameData.RaceResult = playerRaceResult;
+                    UGSManager.Instance.GameData.RaceResult = playerRaceResult;
                     canSeeRaceResults = true;
                 }
             }
@@ -149,7 +149,7 @@ namespace UI.Screen
 
         private void OnRaceStart(string message)
         {
-            GameManager.Instance.GameData.HorseNumber = int.Parse(message);
+            UGSManager.Instance.GameData.HorseNumber = int.Parse(message);
             CloseAllTabs();
             OpenTab(ScreenTabType.RaceInProgress);
         }
@@ -157,7 +157,7 @@ namespace UI.Screen
         private void OnRaceResult(string _raceResult)
         {
             UGS.CloudSave.PlayerRaceResult raceResult = JsonConvert.DeserializeObject<UGS.CloudSave.PlayerRaceResult>(_raceResult);
-            GameManager.Instance.GameData.RaceResult = raceResult;
+            UGSManager.Instance.GameData.RaceResult = raceResult;
 
             CloseAllTabs();
             OpenTab(ScreenTabType.RaceResults);
@@ -177,7 +177,7 @@ namespace UI.Screen
 
         private async void EnterRace()
         {
-            await GameManager.Instance.FetchCurrentLocation();
+            await UGSManager.Instance.FetchCurrentLocation();
 
             string dateTime = string.Empty;
             messageText.text = string.Empty;
@@ -187,20 +187,20 @@ namespace UI.Screen
             }
 
             //Get host ID from the currentRaceCheckins location
-            string hostID = await GameManager.Instance.GetHostID();
+            string hostID = await UGSManager.Instance.GetHostID();
             if (string.IsNullOrEmpty(hostID) || string.IsNullOrWhiteSpace(hostID))
             {
                 messageText.text = "No venue found at this location";
                 return;
             }
-            if (hostID == GameManager.Instance.GameData.PlayerID)
+            if (hostID == UGSManager.Instance.GameData.PlayerID)
             {
                 messageText.text = "Host can't join its own venue";
                 return;
             }
 
             //Check if the race lobby data exists. 
-            string raceLobbyData = await GameManager.Instance.TryGetRaceLobby(GameManager.Instance.GameData.HostID);
+            string raceLobbyData = await UGSManager.Instance.TryGetRaceLobby(UGSManager.Instance.GameData.HostID);
             bool isRaceLobbyExists = !string.IsNullOrEmpty(raceLobbyData) && !string.IsNullOrWhiteSpace(raceLobbyData);
             if (isRaceLobbyExists)
             {
@@ -214,7 +214,7 @@ namespace UI.Screen
 
         private async void VenueCheckIn()
         {
-            await GameManager.Instance.FetchCurrentLocation();
+            await UGSManager.Instance.FetchCurrentLocation();
 
             string dateTime = string.Empty;
             messageText.text = string.Empty;
@@ -224,33 +224,33 @@ namespace UI.Screen
             }
 
             //Get host ID from the currentRaceCheckins location
-            string hostID = await GameManager.Instance.GetHostID();
+            string hostID = await UGSManager.Instance.GetHostID();
             if (string.IsNullOrEmpty(hostID))
             {
                 messageText.text = "No venue found at this location";
                 return;
             }
-            if (hostID == GameManager.Instance.GameData.PlayerID)
+            if (hostID == UGSManager.Instance.GameData.PlayerID)
             {
                 messageText.text = "Host can't join its own venue";
                 return;
             }
 
-            Func<Task<string>> checkInResponse = () => GameManager.Instance.CloudCode.CheckIn(hostID, dateTime);
+            Func<Task<string>> checkInResponse = () => UGSManager.Instance.CloudCode.CheckIn(hostID, dateTime);
             string checkInMessage = await LoadingScreen.Instance.PerformAsyncWithLoading(checkInResponse);
             messageText.text = checkInMessage;
         }
 
         private async void RequestRaceJoinAsync(string hostID, string dateTime)
         {
-            Func<Task<string>> raceJoinResponse = () => GameManager.Instance.CloudCode.RequestRaceJoin(hostID, dateTime);
+            Func<Task<string>> raceJoinResponse = () => UGSManager.Instance.CloudCode.RequestRaceJoin(hostID, dateTime);
             string raceJoin = await LoadingScreen.Instance.PerformAsyncWithLoading(raceJoinResponse);
 
             if (!string.IsNullOrEmpty(raceJoin))
             {
                 UGS.CloudCode.JoinRaceResponse joinRaceResponse = JsonConvert.DeserializeObject<UGS.CloudCode.JoinRaceResponse>(raceJoin);
                 DateTime raceTime = DateTime.Parse(joinRaceResponse.RaceTime);
-                GameManager.Instance.GameData.RaceTime = raceTime;
+                UGSManager.Instance.GameData.RaceTime = raceTime;
                 if (joinRaceResponse.CanWaitInLobby)
                 {
                     // Show the lobby screen

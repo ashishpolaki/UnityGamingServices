@@ -44,13 +44,13 @@ namespace UI.Screen.Tab
                 errorMessageText.text = "Player name should not be more than 50 characters and must not contain spaces.";
                 return;
             }
-            Func<Task> method = () => GameManager.Instance.Authentication.SetPlayerNameAsync(playerName);
+            Func<Task> method = () => UGSManager.Instance.Authentication.SetPlayerNameAsync(playerName);
             await LoadingScreen.Instance.PerformAsyncWithLoading(method);
             UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Show, ScreenTabType.RoleSelection);
         }
         private async void GenerateRandomPlayerName()
         {
-            Func<Task> method = () => GameManager.Instance.Authentication.GenerateRandomPlayerName();
+            Func<Task> method = () => UGSManager.Instance.Authentication.GenerateRandomPlayerName();
             await LoadingScreen.Instance.PerformAsyncWithLoading(method);
             UIController.Instance.ScreenEvent(ScreenType.CharacterCustomization, UIScreenEvent.Show, ScreenTabType.RoleSelection);
         }

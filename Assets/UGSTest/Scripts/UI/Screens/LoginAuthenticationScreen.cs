@@ -20,7 +20,7 @@ namespace UI.Screen
         }
         private void OnEnable()
         {
-            GameManager.Instance.Authentication.OnSignedInEvent += SignInSuccessful;
+            UGSManager.Instance.Authentication.OnSignedInEvent += SignInSuccessful;
 
             registerTabBtn.onClick.AddListener(() => OpenRegisterTab());
             loginTabBtn.onClick.AddListener(() => OpenLoginTab());
@@ -28,9 +28,9 @@ namespace UI.Screen
         }
         private void OnDisable()
         {
-            if (GameManager.Instance != null)
+            if (UGSManager.Instance != null)
             {
-                GameManager.Instance.Authentication.OnSignedInEvent -= SignInSuccessful;
+                UGSManager.Instance.Authentication.OnSignedInEvent -= SignInSuccessful;
             }
 
             registerTabBtn.onClick.RemoveAllListeners();
@@ -54,7 +54,7 @@ namespace UI.Screen
         }
         private async void SignInAnonymously()
         {
-            Func<Task> method = () => GameManager.Instance.Authentication.SignInAnonymouslyAsync();
+            Func<Task> method = () => UGSManager.Instance.Authentication.SignInAnonymouslyAsync();
             await LoadingScreen.Instance.PerformAsyncWithLoading(method);
         }
         private void ButtonInteractable(ScreenTabType screenType)

@@ -4,17 +4,17 @@ using UnityEngine;
 using UGS;
 using System.Threading.Tasks;
 
-public class GameManager : MonoBehaviour
+public class UGSManager : MonoBehaviour
 {
-    private static GameManager instance;
+    private static UGSManager instance;
 
-    public static GameManager Instance
+    public static UGSManager Instance
     {
         get
         {
             if (instance == null)
             {
-                instance = FindObjectOfType<GameManager>();
+                instance = FindObjectOfType<UGSManager>();
                 if (instance != null)
                 {
                     DontDestroyOnLoad(instance.gameObject);

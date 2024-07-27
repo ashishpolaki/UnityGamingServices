@@ -7,27 +7,27 @@ public class PlayerLogin : MonoBehaviour
     #region Unity Methods
     private void OnEnable()
     {
-        GameManager.Instance.Authentication.OnSignedInEvent += SignInSuccessful;
+        UGSManager.Instance.Authentication.OnSignedInEvent += SignInSuccessful;
     }
     private void OnDisable()
     {
-        if (GameManager.Instance != null)
+        if (UGSManager.Instance != null)
         {
-            GameManager.Instance.Authentication.OnSignedInEvent -= SignInSuccessful;
+            UGSManager.Instance.Authentication.OnSignedInEvent -= SignInSuccessful;
         }
     }
     private async void Start()
     {
-        if (GameManager.Instance.Authentication.IsSignInCached())
+        if (UGSManager.Instance.Authentication.IsSignInCached())
         {
-            Func<Task> method = () => GameManager.Instance.Authentication.CacheSignInAsync();
+            Func<Task> method = () => UGSManager.Instance.Authentication.CacheSignInAsync();
             await LoadingScreen.Instance.PerformAsyncWithLoading(method);
         }
         else
         {
             UI.UIController.Instance.ScreenEvent(ScreenType.Login, UIScreenEvent.Open);
         }
-        GameManager.Instance.GPS.RequestPermission();
+        UGSManager.Instance.GPS.RequestPermission();
     }
     #endregion
 

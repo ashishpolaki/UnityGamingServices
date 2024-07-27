@@ -28,11 +28,11 @@ namespace UI.Screen.Tab
             if (CheatCode.Instance.IsCheatEnabled)
             {
                 DateTime currentDateTime = DateTime.UtcNow.Add(DateTime.Parse(CheatCode.Instance.CheatDateTime) - DateTime.UtcNow);
-                timeLeft = GameManager.Instance.GameData.RaceTime - currentDateTime;
+                timeLeft = UGSManager.Instance.GameData.RaceTime - currentDateTime;
             }
             else
             {
-                timeLeft = GameManager.Instance.GameData.RaceTime - DateTime.UtcNow;
+                timeLeft = UGSManager.Instance.GameData.RaceTime - DateTime.UtcNow;
             }
             if (coroutine != null)
             {
@@ -40,7 +40,7 @@ namespace UI.Screen.Tab
             }
             coroutine = StartCoroutine(StartCountDownTimeLeft());
 
-            bool isCheckedInAlready = await GameManager.Instance.IsPlayerAlreadyCheckIn();
+            bool isCheckedInAlready = await UGSManager.Instance.IsPlayerAlreadyCheckIn();
             raceCheckInBtn.interactable = !isCheckedInAlready;
         }
 
@@ -59,7 +59,7 @@ namespace UI.Screen.Tab
 
         private async void RaceConfirmCheckIn()
         {
-            Func<Task<bool>> confirmCheckinResponse = () => GameManager.Instance.CloudCode.ConfirmRaceCheckIn(GameManager.Instance.GameData.HostID, GameManager.Instance.GameData.PlayerName);
+            Func<Task<bool>> confirmCheckinResponse = () => UGSManager.Instance.CloudCode.ConfirmRaceCheckIn(UGSManager.Instance.GameData.HostID, UGSManager.Instance.GameData.PlayerName);
             bool isCheckedIn = await LoadingScreen.Instance.PerformAsyncWithLoading(confirmCheckinResponse);
             if (isCheckedIn)
             {

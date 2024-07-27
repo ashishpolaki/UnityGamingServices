@@ -11,18 +11,18 @@ namespace UI.Screen
         private void OnEnable()
         {
             signOutBtn.onClick.AddListener(() => SignOut());
-            if (GameManager.Instance != null)
+            if (UGSManager.Instance != null)
             {
-                GameManager.Instance.Authentication.OnSignedOut += OnSignedOutEvent;
+                UGSManager.Instance.Authentication.OnSignedOut += OnSignedOutEvent;
             }
             Enable();
         }
         private void OnDisable()
         {
             signOutBtn.onClick.RemoveAllListeners();
-            if (GameManager.Instance != null)
+            if (UGSManager.Instance != null)
             {
-                GameManager.Instance.Authentication.OnSignedOut -= OnSignedOutEvent;
+                UGSManager.Instance.Authentication.OnSignedOut -= OnSignedOutEvent;
             }
         }
         #endregion
@@ -31,7 +31,7 @@ namespace UI.Screen
         private void Enable()
         {
             //If player name is empty then open player name tab
-            if (string.IsNullOrEmpty(GameManager.Instance.GameData.PlayerName))
+            if (string.IsNullOrEmpty(UGSManager.Instance.GameData.PlayerName))
             {
                 OpenTab(ScreenTabType.PlayerName);
             }
@@ -43,11 +43,11 @@ namespace UI.Screen
         }
         private void SignOut()
         {
-            GameManager.Instance.Authentication.Signout();
+            UGSManager.Instance.Authentication.Signout();
         }
         private void OnSignedOutEvent()
         {
-            GameManager.Instance.ResetData();
+            UGSManager.Instance.ResetData();
             UIController.Instance.ScreenEvent(ScreenType.Login, UIScreenEvent.Open);
             Close();
         }
